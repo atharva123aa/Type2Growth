@@ -17,3 +17,16 @@ margin-left:4px ;} #canvas{
      max-width:679px;
      height:338px; display: block;
 }#inputarea{width:100% ;max-width:559px; padding:0 1rem 2rem;}/* todo add a visual too for this theme as it looks boring
+*/ #typebox{width:100%; background:#fff8fb; 
+border:1px  solid #efbfd2; border-radius :9px; padding:11px 16px; font-size:14px; 
+color:#8d4d68; 
+font-family:monospace; resize:none; 
+height:80px; outline:none; 
+ transition: border-color 0.2s;} #typebox::placeholder{color:#d3a3b8;}
+ #typebox:focus{border-color:#d96c98;} #tip{font-size:16px; color:#b67a93; margin-top:9px; text-align:left; 
+font-family:Courier;}
+#clearbtn{
+    display:block;
+    margin:9px auto 0;
+    font-size:13px; color:#b04d76; background: none ; border :1px solid  #efbfd2; border-radius: 6px ;
+ padding:5px 16px; cursor:pointer; font-family:courier; transition: background 0.2s, color 0.2s;}.clearbtn:hover{background:#ffe3ee; color:#d63384;}
