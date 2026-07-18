@@ -148,7 +148,57 @@ addLeaf(seg){ //time to take claude help a bit its
     const lAngle=seg.angle+ side *rnd(0.6,1.2);
     const lLen=rnd(12,27);
 seg.leaves.push({x:bx,y:by,angle: lAngle, len:lLen, 
-    color:this.leafColor});totalFlowers.leafColor ++;}
+    color:this.leafColor});totalFlowers.leafColor ++;} 
+    draw(){ this.drawSeg(this.root);}
+    drawSeg(seg){
+        ctx.strokeStyle= seg.color ;
+        ctx.linewidth =seg.thick ;
+        ctx.lineCap='round';ctx.beginPath();
+        ctx.moveTo(seg.x,seg.y);
+        ctx.lineTO(seg.ex,seg.ey);
+        ctx.stroke();
+        for (const leaf of seg.leaves);
+        this.drawLeaf(leaf);
+        if(seg.flower) this.drawFlower(seg.flower);
+    for (const child of seg.children )
+    this.drawSeg(child);
+
+// todo draw for cherry bolsom to
+    } drawLeaf(leaf){
+        ctx.save();
+        ctx.translate(leaf.x,leaf.y)
+        ctx.rotate(leaf.angle);
+        ctx.fillStyle =leaf.color;
+    ctx.globalAlpha=0.88;
+ctx.beginPath();
+         ctx.ellipse(leaf.len*0.5,
+            0,
+            leaf.len *0.5, leaf.len * 0.18 ,
+            0,0,
+            Math.PI *2
+         )  ; ctx.fill();
+        ctx.globalAlpha = 1;
+    ctx.restore();  } drawFlower(f){
+        ctx.save();
+        ctx.translate(f.x,f.y)
+        for (let i=0;i<f.petals; i++){ctx.save();
+
+//some feature to be added here
+            ctx.rotate(f.rot + (i/f.petals)*Math.PI* 2);
+            ctx.fillStyle=f.color;
+            ctx.globalAlpha= 0.9; ctx.beginpath();
+            ctx.ellipse(f.r*1.11, 0,f.r* 0.55,
+                f.r*0.35, 0 , 0 ,Math.PI *2);
+                ctx.fill();
+                ctx.globalAlpha= 1;
+                ctx.restore();
+            
+        } 
+        ctx.fillStyle= f.center;
+        ctx.beginPath();
+        ctx.arc(0, 0 ,f.r*0.38,0 ,Math.PI *2);
+        ctx.fill(); ctx.restore();
+    }
 }
 
 
