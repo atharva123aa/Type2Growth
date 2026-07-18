@@ -12,10 +12,10 @@ const PALETTE={
     ['#6e4f45','#7d5b50','#8c6759','#735247'
 ], leaves:[
     '#b7e4a8',
-    '#c9efb6','#d7f6c8','a9db98','dff7d7'
+    '#c9efb6','#d7f6c8','#a9db98','#dff7d7'
 ],
 flowers:[
-   ' #ffd9e8','#ffc2d8','#ffb3cf',
+   '#ffd9e8','#ffc2d8','#ffb3cf',
    '#f8a7c4','#f6c6d9',
    '#f9b6cf','#f4a9c7',
 
@@ -53,14 +53,14 @@ function clamp( v,a,b ){
     }
 
 } class Plant{
-    contructor(x) { 
+    constructor(x) { 
         this.x=x;
         this.root=null;
         this.tips=[]
         this.LetterFreq={};
         this.stemColor=pick(PALETTE.stems);
         this.leafColor= pick(PALETTE.leaves);
-        this.flowerCenterColor=pick(PALETTE.flowers);
+        this.flowerColor=pick(PALETTE.flowers);
         this.flowerCenter= 
   pick(PALETTE.flowerCenter);
             this.init();
@@ -70,7 +70,7 @@ function clamp( v,a,b ){
     }
     init(){
         const baseY=H-28;
-        const angle=Math.PI/ 2 +rnd(-0.08,0.08);
+        const angle=-Math.PI/ 2 +rnd(-0.08,0.08);
         this.root=new Segment(this.x, baseY,angle, rnd(28,38), 5, 
     this.stemColor,0);
     this.tips=[this.root];
@@ -80,11 +80,11 @@ function clamp( v,a,b ){
 // todo in my final touch make it look more real
     } 
 grow(ch,speed ){if (!this.tips.length) return;
-    this.LetterFreq[ch]=(this.letterFreq[ch] ||0)+1;
+    this.LetterFreq[ch]=(this.LetterFreq[ch] ||0)+1;
 const isVowel=VOWELS.has(ch.toLowerCase());
 const isSpace=ch ===' ';
 
-const freq=this.LetterFreq[ch]|| 1 
+const freq=this.LetterFreq[ch]|| 1 ;
 const tip=
 this.tips[Math.floor(Math.random() * 
 this.tips.length)];
@@ -118,7 +118,7 @@ if (isSpace|| (tip.depth>2 && Math.random() <0.4)
 }
 branch(tip){
     if (tip.depth> 8) return;
-    const  spread=rnd(0,3,0.7);
+    const spread=rnd(0.3,0.7);
     const  angles=[tip.angle-spread, tip.angle+spread ];
     const newTips=[];
     for (const angle of  angles){
@@ -143,21 +143,21 @@ branch(tip){
 addLeaf(seg){ //time to take claude help a bit its
     const t=rnd(0.3,0.9);
     const bx =seg.x +Math.cos(seg.angle)*seg.len *t;
-    const by =seg.x +Math.sin(seg.angle)*seg.len *t;
-    const side=Math.random()<0.5 ? 1:-1 //posibly in next update add leaf dew too when i learn js math as taking claude help fell unproductiv
+    const by =seg.y+Math.sin(seg.angle)*seg.len *t;
+    const side=Math.random()<0.5 ? 1:-1 ; //posibly in next update add leaf dew too when i learn js math as taking claude help fell unproductiv
     const lAngle=seg.angle+ side *rnd(0.6,1.2);
     const lLen=rnd(12,27);
 seg.leaves.push({x:bx,y:by,angle: lAngle, len:lLen, 
-    color:this.leafColor});totalFlowers.leafColor ++;} 
+    color:this.leafColor});totalLeaves ++;} 
     draw(){ this.drawSeg(this.root);}
     drawSeg(seg){
         ctx.strokeStyle= seg.color ;
-        ctx.linewidth =seg.thick ;
+        ctx.lineWidth =seg.thick ;
         ctx.lineCap='round';ctx.beginPath();
         ctx.moveTo(seg.x,seg.y);
-        ctx.lineTO(seg.ex,seg.ey);
+        ctx.lineTo(seg.ex,seg.ey);
         ctx.stroke();
-        for (const leaf of seg.leaves);
+        for (const leaf of seg.leaves)
         this.drawLeaf(leaf);
         if(seg.flower) this.drawFlower(seg.flower);
     for (const child of seg.children )
@@ -186,7 +186,7 @@ ctx.beginPath();
 //some feature to be added here
             ctx.rotate(f.rot + (i/f.petals)*Math.PI* 2);
             ctx.fillStyle=f.color;
-            ctx.globalAlpha= 0.9; ctx.beginpath();
+            ctx.globalAlpha= 0.9; ctx.beginPath();
             ctx.ellipse(f.r*1.11, 0,f.r* 0.55,
                 f.r*0.35, 0 , 0 ,Math.PI *2);
                 ctx.fill();
@@ -204,11 +204,14 @@ function shiftPlant(seg,dx){
     seg.x+= dx;
     seg.ex+= dx;
     if (seg.flower) {seg.flower.x +=dx;}
-for (const l of seg.leaves) l.x+=dx;
-for (const c of seg.children) shiftPlant(c,dx);
+    for (const l of seg.leaves) l.x+=dx;
+    for (const c of seg.children) shiftPlant(c,dx);
 
+function getPlantX(index,total){
+    return (W/ (total +1) )*(index+1);
+}}
 
-} function  redistributePlants(){
+function  redistributePlants(){
     plants.forEach((p,i)=>{
         const nx=getPlantX(i,plants.length);
         const dx=nx-p.x;
@@ -224,7 +227,7 @@ for (const c of seg.children) shiftPlant(c,dx);
     ctx.fillRect(0,0,W,H);
 
     ctx.fillStyle='#ccb392'
-    ctx.beginpath();
+    ctx.beginPath();
     ctx.ellipse(W/2,H-10, W*0.55, 22, 0 ,0,Math.PI* 2);  //btw for these tag i prefer to test first with any ai or unwanted error come
    ctx.fill();
     ctx.fillStyle ='#b99973'; 
@@ -240,10 +243,12 @@ function updateStats() {
 function  render() {
     ctx.clearRect(0,0,W,H);
     drawBackground();
-    for (const plant of plants ) p.draw(); updateStats();}
+    for (const plant of plants ) {
+        plant.draw();
+    updateStats();}}
     let pLen =0;
     typebox.addEventListener('input', () => {
-        const val=typebox.value()
+        const val=typebox.value;
         ; 
         const now=Date.now();
         const dt=now -lastTime;
@@ -253,9 +258,9 @@ function  render() {
         pLen=val.length;
         return;
     }
-    const newChars=val.splice(pLen);
+    const newChars=val.slice(pLen);
     pLen=val.length;
-    for(const ch of newChars) {charcount++;
+    for(const ch of newChars) {charCount++;
         if (ch ==='\n'){plants.push(new Plant(0));
             redistributePlants();
             continue;
@@ -274,7 +279,7 @@ clearbtn.addEventListener('click',() => {
     totalFlowers=0;
     charCount=0;
     typebox.value ='' ;
-    plen=0;
+    pLen=0;
     ctx.clearRect(0,0,W,H);
     drawBackground();
     updateStats();
