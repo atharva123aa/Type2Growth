@@ -200,6 +200,86 @@ ctx.beginPath();
         ctx.fill(); ctx.restore();
     }
 }
+function shiftPlant(seg,dx){
+    seg.x+= dx;
+    seg.ex+= dx;
+    if (seg.flower) {seg.flower.x +=dx;}
+for (const l of seg.leaves) l.x+=dx;
+for (const c of seg.children) shiftPlant(c,dx);
 
 
+} function  redistributePlants(){
+    plants.forEach((p,i)=>{
+        const nx=getPlantX(i,plants.length);
+        const dx=nx-p.x;
+        if (Math.abs(dx)> 1) shiftPlant(p.root,dx);
+        p.x=nx;
+    });
+} function drawBackground(){
+    const g=ctx.createLinearGradient(0,0,0,H)
+    g.addColorStop(0,'#DFF4FF')
+    g.addColorStop(0.45,'#FEF8FB')
+    g.addColorStop(1,'#FFEEF6')
+    ctx.fillStyle= g;
+    ctx.fillRect(0,0,W,H);
+
+    ctx.fillStyle='#ccb392'
+    ctx.beginpath();
+    ctx.ellipse(W/2,H-10, W*0.55, 22, 0 ,0,Math.PI* 2);  //btw for these tag i prefer to test first with any ai or unwanted error come
+   ctx.fill();
+    ctx.fillStyle ='#b99973'; 
+   ctx.fillRect(0,H-18,W,18);
+
+} 
+function updateStats() {
+    document.getElementById('sc').textContent=totalStems;
+    document.getElementById('lc').textContent= totalLeaves;
+    document.getElementById('fc').textContent=totalFlowers;
+    document.getElementById('cc').textContent=charCount;
+} 
+function  render() {
+    ctx.clearRect(0,0,W,H);
+    drawBackground();
+    for (const plant of plants ) p.draw(); updateStats();}
+    let pLen =0;
+    typebox.addEventListener('input', () => {
+        const val=typebox.value()
+        ; 
+        const now=Date.now();
+        const dt=now -lastTime;
+        const speed= clamp(1000 /(dt+1),0,20);
+        lastTime=now ;
+    if (val.length<pLen){
+        pLen=val.length;
+        return;
+    }
+    const newChars=val.splice(pLen);
+    pLen=val.length;
+    for(const ch of newChars) {charcount++;
+        if (ch ==='\n'){plants.push(new Plant(0));
+            redistributePlants();
+            continue;
+        }
+        if (plants.length===0){
+            plants.push(new Plant(W/2));
+        }
+    const target=plants[plants.length -1];
+    target.grow(ch,speed);
+    } render();});
+//will add a dissapearing effect later on clearbtn
+clearbtn.addEventListener('click',() => {
+    plants=[];
+    totalStems=0;
+    totalLeaves=0;
+    totalFlowers=0;
+    charCount=0;
+    typebox.value ='' ;
+    plen=0;
+    ctx.clearRect(0,0,W,H);
+    drawBackground();
+    updateStats();
+
+}) 
+drawBackground();
+typebox.focus();
 
