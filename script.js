@@ -116,3 +116,40 @@ if (isSpace|| (tip.depth>2 && Math.random() <0.4)
     totalStems++;
 
 }
+branch(tip){
+    if (tip.depth> 8) return;
+    const  spread=rnd(0,3,0.7);
+    const  angles=[tip.angle-spread, tip.angle+spread ];
+    const newTips=[];
+    for (const angle of  angles){
+    const len =rnd(18,32);
+    const thick= Math.max(1, tip.thick- 1); 
+
+    const  child=new Segment(tip.ex, 
+        tip.ey,
+        angle,
+        len,
+        thick,
+        this.stemColor, 
+        tip.depth+1);
+    tip.children.push(child);
+    newTips.push(child);
+    totalStems++;
+    
+    } const idx= this.tips.indexOf(tip) ;
+    if (idx !==-1)
+    this.tips.splice(idx ,1,...newTips);
+}
+addLeaf(seg){ //time to take claude help a bit its
+    const t=rnd(0.3,0.9);
+    const bx =seg.x +Math.cos(seg.angle)*seg.len *t;
+    const by =seg.x +Math.sin(seg.angle)*seg.len *t;
+    const side=Math.random()<0.5 ? 1:-1 //posibly in next update add leaf dew too when i learn js math as taking claude help fell unproductiv
+    const lAngle=seg.angle+ side *rnd(0.6,1.2);
+    const lLen=rnd(12,27);
+seg.leaves.push({x:bx,y:by,angle: lAngle, len:lLen, 
+    color:this.leafColor});totalFlowers.leafColor ++;}
+}
+
+
+
