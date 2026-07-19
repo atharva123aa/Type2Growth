@@ -5,7 +5,20 @@
 
 </head>
 <body> <div id="wrap"><div id="header">
-    <h1>Type4Growth</h1><p>Every type helps the plant grow.Feel free to type </p>
+    <button id="sbtn">Sounds</button>
+    <div id="soundmenu" class="hidden">
+        <div class="sounditem">
+            <label>RAIN</label>
+            <INPUT TYPE="RANGE" ID="rainVolume" min="0" max="1" step="0.01" value="0">
+        </div> 
+        <div class="sounditem">
+            <label>Blossom</label>
+            <input type="range" id="blossomVolume" min="0" max="1" 
+            step="0.01" value="0" >
+        </div><div class="sounditem"><label>Forest</label>
+        <input type="range" id= "forestVolume" min="0"
+    max="1" step="0.01" value="0.4"></div>
+    <h1>Type4Growth</h1><p>Every type helps the plant grow.Feel free to type and if you wanna change shape just refresh </p>
     </div>
     <div id ="stats">
         <div class="stat">Stem<span id="sc">0</span></div><div class="stat">Chars<span id="cc">0 </span></div><div class="stat">Leaves<span id="lc">0</span></div><div class="stat">Flowers<span id="fc">0</span></div>
@@ -14,6 +27,9 @@
         <textarea id="typebox" placeholder="FAST FAST ! START TYPING" autocomplete="off" spellcheck="false"></textarea>
         <div id="tip">for flower growth use vowel .for stem use space and for leave type fast.</div><button id=
     "clearbtn">Clear</button></div>
+    </div>
+
+
     </div>
 
 </body></html>
