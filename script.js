@@ -1,7 +1,12 @@
 const canvas=document.getElementById('canvas');
 const ctx= canvas.getContext('2d');
 const typebox= document.getElementById('typebox');
-const clearbtn=document.getElementById('clearbtn')
+const clearbtn=document.getElementById('clearbtn');
+const soundbtn= document.getElementById("sbtn");
+const soundmenu = document.getElementById("soundmenu");
+const rainVolume=document.getElementById("rainVolume");
+const blossomVolume=document.getElementById("blossomVolume");
+const forestVolume =document.getElementById("forestVolume");
 const W=679;
 const H=338;
 canvas.width= W;
@@ -21,6 +26,16 @@ flowers:[
 
 ], flowerCenter: ['#fff5aa','#ffe680','#fff3c4','#ffe08f']
 };
+const rain=new Audio("r.mp3")
+const blossom=new Audio("s.mp3")
+const forest=new Audio("f.mp3")
+rain.loop=true;
+blossom.loop=true;
+forest.loop= true;
+rain.volume= 0;
+blossom.volume=0;
+forest.volume=0.4;
+
 let plants=[]; 
 let lastTime=Date.now();
 let  charCount= 0;
@@ -206,10 +221,10 @@ function shiftPlant(seg,dx){
     if (seg.flower) {seg.flower.x +=dx;}
     for (const l of seg.leaves) l.x+=dx;
     for (const c of seg.children) shiftPlant(c,dx);
-
+}
 function getPlantX(index,total){
     return (W/ (total +1) )*(index+1);
-}}
+}
 
 function  redistributePlants(){
     plants.forEach((p,i)=>{
@@ -244,12 +259,11 @@ function  render() {
     ctx.clearRect(0,0,W,H);
     drawBackground();
     for (const plant of plants ) {
-        plant.draw();
-    updateStats();}}
+        plant.draw();}
+    updateStats();}
     let pLen =0;
     typebox.addEventListener('input', () => {
         const val=typebox.value;
-        ; 
         const now=Date.now();
         const dt=now -lastTime;
         const speed= clamp(1000 /(dt+1),0,20);
@@ -270,7 +284,8 @@ function  render() {
         }
     const target=plants[plants.length -1];
     target.grow(ch,speed);
-    } render();});
+    } render();
+localStorage.setItem("gardenText",typebox.value);});
 //will add a dissapearing effect later on clearbtn
 clearbtn.addEventListener('click',() => {
     plants=[];
@@ -285,6 +300,44 @@ clearbtn.addEventListener('click',() => {
     updateStats();
 
 }) 
+soundbtn.addEventListener("click",() => {
+    soundmenu.classList.toggle("hidden");
+
+});
+rainVolume.addEventListener("input",() => {
+    rain.volume=rainVolume.value;
+});
+blossomVolume.addEventListener("input",() =>{
+    blossom.volume=blossomVolume.value;
+});
+// add more sound in case i forgot
+
+forestVolume.addEventListener("input",()  =>{
+    forest.volume=forestVolume.value;
+});
+
+let musicStarted=false;
+function startMusic(){
+
+
+    if(musicStarted) return;
+    musicStarted= true;
+    Promise.all([rain.play(), blossom.play(), forest.play()]) 
+    .catch((err)=>{
+    console.warn("blocked idiot,retry:}",err);
+    musicStarted=false;
+ });}
+document.addEventListener("pointerdown",startMusic, {once:true});
+document.addEventListener("keydown",startMusic ,{once:true});
+
+
+    
+
 drawBackground();
+const saved=localStorage.getItem("gardenText");
+if (saved)
+{typebox.value= saved;
+    typebox.dispatchEvent(new Event("input"));
+}
 typebox.focus();
 
