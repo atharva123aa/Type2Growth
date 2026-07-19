@@ -2,7 +2,7 @@
     background:#fff4f8; font-family: Helvetica, sans-serif; min-height:99vh; display:flex;
     justify-content:center;
 }#wrap{display:flex; flex-direction:column; align-items: center; width:100%;
- max-width:706px; min-height:100vh; } #header{
+ max-width:706px; min-height:100vh; } #header{position:relative; 
 text-align: center; padding:2rem 1rem 0.6rem;} #header h1{font-size:22px;
 font-weight:396;
 color: #c94f7c; letter-spacing:0.04em;} #header p {font-size:13px; color: #b67a93;
@@ -29,4 +29,33 @@ font-family:Courier;}
     display:block;
     margin:9px auto 0;
     font-size:13px; color:#b04d76; background: none ; border :1px solid  #efbfd2; border-radius: 6px ;
- padding:5px 16px; cursor:pointer; font-family:courier; transition: background 0.2s, color 0.2s;}.clearbtn:hover{background:#ffe3ee; color:#d63384;}
+ padding:5px 16px; cursor:pointer; font-family:courier; transition: background 0.2s, color 0.2s;}#clearbtn:hover{background:#ffe3ee; color:#d63384;}
+ .hidden{display:none;} 
+ #sbtn{position: absolute;
+top:0.4rem; right:1rem;
+font-size:12px;
+font-family:Verdana; color:#b04d76; 
+border: 1px solid#efbfd2; border-radius: 19px;; padding:6px 14px; 
+ cursor:pointer; 
+transition: background 0.2s,color 0.2s;} #sbtn:hover{
+    background:#ffe3ee; color:#d63384;
+}
+ 
+ 
+ #soundmenu{position: absolute;
+    top:2.6rem;
+    right:1rem; width:222px; 
+    background: #fff7fb; border:1px solid #e2e5ed; 
+border-radius:12px;
+padding:16px; box-shadow:0 8px 20px rgba(201,79,124,0.16) ; z-index:9; text-align:left; /*todo improve mobile response with z indexin'*/
+
+
+ }.sounditem{
+    display:flex; flex-direction :column;
+margin-bottom:14px; 
+ }
+ .sounditem:last-child{margin-bottom: 0;}.sounditem label { 
+    margin-bottom:6px; 
+    color:#b04d76;
+font-size:14px;
+ }
