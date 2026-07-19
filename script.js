@@ -78,10 +78,9 @@ function clamp( v,a,b ){
         this.flowerColor=pick(PALETTE.flowers);
         this.flowerCenter= 
   pick(PALETTE.flowerCenter);
+  this.flowers=[];
+  this.fallen=[];
             this.init();
-
-
-
     }
     init(){
         const baseY=H-28;
@@ -104,6 +103,9 @@ const tip=
 this.tips[Math.floor(Math.random() * 
 this.tips.length)];
 
+if (ch==='!'){ this.burst(); return;}
+if(ch ==='?'){ this.curl(tip); return;}
+if (ch==='.'){this.dropLeaf(); return; }
 if (isSpace|| (tip.depth>2 && Math.random() <0.4)
 ) {this.branch(tip);} else if (isVowel &&  Math.random() <0.7) {
     if (!tip.flower) {
@@ -112,8 +114,9 @@ if (isSpace|| (tip.depth>2 && Math.random() <0.4)
             y:tip.ey,
             r: clamp(4 +freq*0.7, 5, 14),color:this.flowerColor,
             center:this.flowerCenter, 
-            petals:5+ Math.floor(freq/ 2), rot:Math.random()* Math.PI};
+            petals:5+ Math.floor(freq/ 2), rot:Math.random()* Math.PI}; 
                 totalFlowers++;
+                this.flowers.push(tip.flower);
         }
     } else{ this.extend(tip,speed,freq);
 } if (Math.random()> 0.5) this.addLeaf(tip);
@@ -164,7 +167,32 @@ addLeaf(seg){ //time to take claude help a bit its
     const lLen=rnd(12,27);
 seg.leaves.push({x:bx,y:by,angle: lAngle, len:lLen, 
     color:this.leafColor});totalLeaves ++;} 
-    draw(){ this.drawSeg(this.root);}
+burst() {
+    if (!this.flowers.length) return;
+    const f=pick(this.flowers)
+f.r =clamp(f.r *1.4,5,26);
+ f.petals=Math.min(f.petals+2,14);
+}
+curl(tip) { const dir=Math.random()< 0.5? 1:-1;
+
+    const hookAngle= tip.angle +dir*rnd(0.9,1.3) ;
+    const len=rnd(10, 16);
+    const thick=Math.max(1,tip.thick -0.7);
+    const child=new Segment(tip.ex,tip.ey ,hookAngle, len,thick,this.stemColor,tip.depth +1);
+    tip.children.push(child);
+    const idx =this.tips.indexOf(tip);
+    if (idx!==-1) this.tips.splice(idx,1,child); totalStems++;
+
+}
+dropLeaf() {  //fucking circle math again
+    const gx=this.x+rnd(-40,40);
+    const gy=H -20+rnd(-4,4) ;
+this.fallen.push({x:gx,y:gy,angle:rnd(0,Math.PI*2),len:rnd(12,20),color:this.leafColor}); totalLeaves++;
+
+}
+
+    draw(){ this.drawSeg(this.root);
+    for (const lf  of this.fallen) this.drawLeaf(lf);}
     drawSeg(seg){
         ctx.strokeStyle= seg.color ;
         ctx.lineWidth =seg.thick ;
@@ -174,9 +202,10 @@ seg.leaves.push({x:bx,y:by,angle: lAngle, len:lLen,
         ctx.stroke();
         for (const leaf of seg.leaves)
         this.drawLeaf(leaf);
-        if(seg.flower) this.drawFlower(seg.flower);
+       
     for (const child of seg.children )
     this.drawSeg(child);
+ if(seg.flower) this.drawFlower(seg.flower);
 
 // todo draw for cherry bolsom to
     } drawLeaf(leaf){
@@ -230,8 +259,11 @@ function  redistributePlants(){
     plants.forEach((p,i)=>{
         const nx=getPlantX(i,plants.length);
         const dx=nx-p.x;
-        if (Math.abs(dx)> 1) shiftPlant(p.root,dx);
-        p.x=nx;
+        if (Math.abs(dx) >1){
+            shiftPlant(p.root,dx);
+            for (const lf of p.fallen)  lf.x+=dx;
+        }
+       p.x=nx;
     });
 } function drawBackground(){
     const g=ctx.createLinearGradient(0,0,0,H)
