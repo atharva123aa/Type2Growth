@@ -35,14 +35,14 @@ forest.loop= true;
 rain.volume= 0;
 blossom.volume=0;
 forest.volume=0.4;
-const modes=['sunlight','rain','breeze','blossom','night;'];
-letcurrentMode='sunlight';
+const modes=['sunlight','rain','breeze','blossom','night'];
+let currentMode='sunlight';
 const mode_sky={
     sunlight:{t:'#dff4ff', m:'#fef8fb', b:'#ffeef6',g:'#ccb392',ge: '#b99973'},
 
     rain: {t:'#9fb4c4', m:'#c7d3dc' ,b:'#dfe6ea',g :'#8f7c63', ge:'#75664f'},
     breeze :{t:'#cdeeff',
-        m:'f2fbf3', b:'#eafbe9',g:'#c9b083',ge:'#ad8f64'
+        m:'#f2fbf3', b:'#eafbe9',g:'#c9b083',ge:'#ad8f64'
     } ,blossom:
     {t:'#ffd6e6', m:'#ffe9f0', b:'#fff2f7',g:'#d8b98f',ge:'#c19a6f'}, night:{t:'#0c1730',m:'#1b2545',b: '#2c2550',g:'#3a2e42' ,ge:'#2a2131'}};
 const mode_audio={sunlight:{rain:0, blossom:0, forest:0.4},
@@ -55,13 +55,13 @@ let skyNow=Object.assign({}, mode_sky.sunlight);
 let skyTarget=Object.assign({},mode_sky.sunlight);
 let audioTarget=Object.assign({},mode_audio.sunlight);
 // i will use ai for help in hex rgb conversion as i am not well versed in this 
-function hexToRgb(hex){const n=parseInt(hex.slice(1),(16);
-    return [(n>>16) &255,(n>>8)&255,n%255];
+function hexToRgb(hex){const n=parseInt(hex.slice(1),16);
+    return [(n>>16) &255,(n>>8)&255,n&255];
 }
 function rgbToHex(r,g,b){
 return '#' +[r,g,b].map(v=>Math.round(clamp(v,0,255)).toString(16).padStart(2,'0')).join('');} function lerpColor(a,b,t){
     const ca=hexToRgb(a), cb=hexToRgb(b);
-    return rgbToHex(ca[0]+ (cb[0]-ca[0])*t,ca[1]+(cb[1] -ca[1]) *t,ca[2]+(cb[2]=ca[2]* t);
+    return rgbToHex(ca[0]+ (cb[0]-ca[0])*t,ca[1]+(cb[1] -ca[1]) *t,ca[2]+(cb[2]-ca[2])* t);
 }
 function updateSky() {const speed=0.03;
     for (const  k in skyTarget) skyNow[k]= lerpColor(skyNow[k],skyTarget[k] ,speed) ;}
@@ -69,7 +69,7 @@ function updateAudioFade(){
     const speed=0.01;
     rain.volume= clamp(rain.volume+(audioTarget.rain-rain.volume)* speed,0,1);
     blossom.volume=clamp (blossom.volume+(audioTarget.blossom-blossom.volume)* speed,0,1);
-    forest.volume=clamp (blossom.volume+(audioTarget.blossom-blossom.volume)* speed,0,1);
+    forest.volume=clamp (forest.volume+(audioTarget.forest-forest.volume)* speed,0,1);
     rainVolume.value=rain.volume;
     blossomVolume.value=blossom.volume;
     forestVolume.value=forest.volume;
@@ -93,17 +93,21 @@ let stars=[];
 for(let i=0; 
     i<40;
     i++
-){ stars.push({ x:rnd(0,W), y:rnd(0,H*0.6),r:rnd(0,6,1.7), phase: rnd(0,Math.PI*2)});}
-function spawnParticle(){if (currentMode==='rain' &&Math.random()<0.5){
-    particles.push({type:'rain',x:rnd(0,W),y:-10, vx:-0.6, vy:rnd(8,16),alpha:0.5});
-
-
+){ stars.push({ x:rnd(0,W), y:rnd(0,H*0.6),r:rnd(0.6,1.7), phase: rnd(0,Math.PI*2)});}
+function spawnParticle(){
+if (currentMode==='rain' &&Math.random()<0.5){
+    particles.push({type:'rain',x:rnd(0,W),y:-10, vx:-0.6, vy:rnd(8,16),len:rnd(8,16), alpha:0.5});
 }
+
+
+
 if (currentMode==='breeze' &&Math.random()<0.08){
-    particles.push({ type:'leaf',x:-10,y:rnd(H*0.2,H*0.8), vx:rnd(1.5,3), vy:rnd(-0.3,0.3),rot:rnd(0,Math.PI*2), spin:rnd(-0.05,0.05), size:rnd(6,10), color:pick(PALETTE.leaves)})
-; if( currentMode==='blossom' && Math.random()<0.10){particles.push({type:'petal',x:rnd(0,W), y :-10,vx:rnd(-0.4,0.4), vy:rnd(0.6,1.4), rot:rnd(0,Math.PI*2),
+    particles.push({ type:'leaf',x:-10,y:rnd(H*0.2,H*0.8), vx:rnd(1.5,3), vy:rnd(-0.3,0.3),rot:rnd(0,Math.PI*2), spin:rnd(-0.05,0.05), size:rnd(6,10), color:pick(PALETTE.leaves)});
+}
+if( currentMode==='blossom' && Math.random()<0.10){particles.push({type:'petal',x:rnd(0,W), y :-10,vx:rnd(-0.4,0.4), vy:rnd(0.6,1.4), rot:rnd(0,Math.PI*2),
 spin:rnd(-0.04,0.04),size:rnd(5,9), color:pick(PALETTE.flowers)});
-}}
+}
+}
 
 function updateParticles(){
     for (const p of particles ){
@@ -113,7 +117,7 @@ function updateParticles(){
 particles=particles.filter(p=> p.y<H+20 && p.x>-20 && p.x<W+20);
 }
 function drawParticles(){
-    for (const p of participles) { if (p.type==='rain'){
+    for (const p of particles) { if (p.type==='rain'){
         ctx.strokeStyle='rgba(200,220,235,'+p.alpha+')';
         ctx.lineWidth= 1.2;
         ctx.beginPath();
@@ -136,8 +140,8 @@ ctx.globalAlpha =1 ;
 
 function drawStars() {
     if (currentMode!== 'night') return; const t=Date.now()/600;
-    ctx.fillStyle="fff" 
-    for ( const s of stars){ const tw= 0.5 +0.5 * Math.sin(ts.phase); ctx.globalAlpha=0.3+tw*0.6;
+    ctx.fillStyle="#fff" 
+    for ( const s of stars){ const tw= 0.5 +0.5 * Math.sin(t+s.phase); ctx.globalAlpha=0.3+tw*0.6;
         ctx.beginPath();
         ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
 } ctx.globalAlpha =1;
@@ -382,11 +386,11 @@ function  redistributePlants(){
     ctx.fillStyle= g;
     ctx.fillRect(0,0,W,H);
 
-    ctx.fillStyle=skyNow.ground
+    ctx.fillStyle=skyNow.g
     ctx.beginPath();
     ctx.ellipse(W/2,H-10, W*0.55, 22, 0 ,0,Math.PI* 2);  //btw for these tag i prefer to test first with any ai or unwanted error come
    ctx.fill();
-    ctx.fillStyle =skyNow.groundedge; // this func made thing hard i could have used a easier insted 
+    ctx.fillStyle =skyNow.ge; // this func made thing hard i could have used a easier insted 
    ctx.fillRect(0,H-18,W,18);
 
 } 
