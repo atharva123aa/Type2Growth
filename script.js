@@ -102,12 +102,48 @@ function spawnParticle(){if (currentMode==='rain' &&Math.random()<0.5){
 if (currentMode==='breeze' &&Math.random()<0.08){
     particles.push({ type:'leaf',x:-10,y:rnd(H*0.2,H*0.8), vx:rnd(1.5,3), vy:rnd(-0.3,0.3),rot:rnd(0,Math.PI*2), spin:rnd(-0.05,0.05), size:rnd(6,10), color:pick(PALETTE.leaves)})
 ; if( currentMode==='blossom' && Math.random()<0.10){particles.push({type:'petal',x:rnd(0,W), y :-10,vx:rnd(-0.4,0.4), vy:rnd(0.6,1.4), rot:rnd(0,Math.PI*2),
-spin:rnd(-0.04,0.04);size:rnd(5,9), color:pick(PALETTE.flowers)});
+spin:rnd(-0.04,0.04),size:rnd(5,9), color:pick(PALETTE.flowers)});
 }}
 
+function updateParticles(){
+    for (const p of particles ){
+        p.x+=p.vx; p.y+=p.vy;
+        if  (p.rot!==undefined) p.rot+=p.spin;
+    }
+particles=particles.filter(p=> p.y<H+20 && p.x>-20 && p.x<W+20);
+}
+function drawParticles(){
+    for (const p of participles) { if (p.type==='rain'){
+        ctx.strokeStyle='rgba(200,220,235,'+p.alpha+')';
+        ctx.lineWidth= 1.2;
+        ctx.beginPath();
+ctx.beginPath(); ctx.moveTo(p.x,p.y) ;
+ctx.lineTo(p.x+p.vx* 3,p.y+p.len);
+ctx.stroke();
+    }
+else {
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot);
+    ctx.fillStyle =p.color;
+    ctx.globalAlpha =0.85;
+ctx.beginPath();
+ctx.ellipse(0,0 ,p.size *0.5,p.size*0.25,0,0,Math.PI*2);
+ctx.fill();
+ctx.globalAlpha =1 ;
+ ctx.restore();}}
+}
 
-}
-}
+function drawStars() {
+    if (currentMode!== 'night') return; const t=Date.now()/600;
+    ctx.fillStyle="fff" 
+    for ( const s of stars){ const tw= 0.5 +0.5 * Math.sin(ts.phase); ctx.globalAlpha=0.3+tw*0.6;
+        ctx.beginPath();
+        ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fill();
+} ctx.globalAlpha =1;
+
+} 
+
 
 let plants=[]; 
 let lastTime=Date.now();
@@ -340,17 +376,17 @@ function  redistributePlants(){
     });
 } function drawBackground(){
     const g=ctx.createLinearGradient(0,0,0,H)
-    g.addColorStop(0,'#DFF4FF')
-    g.addColorStop(0.45,'#FEF8FB')
-    g.addColorStop(1,'#FFEEF6')
+    g.addColorStop(0,skyNow.t)
+    g.addColorStop(0.45,skyNow.m)
+    g.addColorStop(1,skyNow.b)
     ctx.fillStyle= g;
     ctx.fillRect(0,0,W,H);
 
-    ctx.fillStyle='#ccb392'
+    ctx.fillStyle=skyNow.ground
     ctx.beginPath();
     ctx.ellipse(W/2,H-10, W*0.55, 22, 0 ,0,Math.PI* 2);  //btw for these tag i prefer to test first with any ai or unwanted error come
    ctx.fill();
-    ctx.fillStyle ='#b99973'; 
+    ctx.fillStyle =skyNow.groundedge; // this func made thing hard i could have used a easier insted 
    ctx.fillRect(0,H-18,W,18);
 
 } 
@@ -363,8 +399,10 @@ function updateStats() {
 function  render() {
     ctx.clearRect(0,0,W,H);
     drawBackground();
+    drawStars();
     for (const plant of plants ) {
         plant.draw();}
+drawParticles();
     updateStats();}
     let pLen =0;
     typebox.addEventListener('input', () => {
@@ -446,3 +484,12 @@ if (saved)
 }
 typebox.focus();
 
+function loop(){  // as my alch theme was endless so this was neccesary
+ updateSky();
+ updateAudioFade();
+ spawnParticle();
+ updateParticles();
+ render();   requestAnimationFrame(loop);
+ 
+} requestAnimationFrame(loop);
+scheduleNextMode();
