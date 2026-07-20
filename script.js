@@ -2,6 +2,7 @@ const canvas=document.getElementById('canvas');
 const ctx= canvas.getContext('2d');
 const typebox= document.getElementById('typebox');
 const clearbtn=document.getElementById('clearbtn');
+const downloadbtn= document.getElementById('downloadbtn');
 const soundbtn= document.getElementById("sbtn");
 const soundmenu = document.getElementById("soundmenu");
 const rainVolume=document.getElementById("rainVolume");
@@ -449,6 +450,13 @@ clearbtn.addEventListener('click',() => {
 }) 
 soundbtn.addEventListener("click",() => {
     soundmenu.classList.toggle("hidden");
+
+});
+
+downloadbtn.addEventListener("click",()=> {
+const  link=document.createElement("a");
+link.download="my-typegarden"+Date.now()+".png";
+link.href=canvas.toDataURL("image/png"); link.click();
 
 });
 rainVolume.addEventListener("input",() => {
