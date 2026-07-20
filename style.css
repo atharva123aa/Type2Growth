@@ -30,7 +30,12 @@ font-family:Courier;}
     display:block;
     margin:9px auto 0;
     font-size:13px; color:#b04d76; background: none ; border :1px solid  #efbfd2; border-radius: 6px ;
- padding:5px 16px; cursor:pointer; font-family:courier; transition: background 0.2s, color 0.2s;}#clearbtn:hover{background:#ffe3ee; color:#d63384;}
+ padding:5px 16px; cursor:pointer; font-family:courier; transition: background 0.2s, color 0.2s;}#clearbtn:hover{background:#ffe3ee; color:#d63384;} #downloadbtn{
+display:block; margin:14px auto 0; font-size: 16px; color:#b04d76; background: none;;
+ border: 1px solid#efbfd2; border-radius :6px;  padding: 6px 18px ;
+ cursor: pointer; 
+ font-family:courier; transition: background 0.2s, color 0.2s;}
+ #downloadbtn:hover{background: #ffe3ee; color:#d63384;}
  .hidden{display:none;} 
  #sbtn{position: absolute;
 top:0.4rem; right:0;
