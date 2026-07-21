@@ -148,6 +148,23 @@ function drawStars() {
 } ctx.globalAlpha =1;
 
 } 
+// empty left side so putting ts  stuff here
+let wallet={leaves:0, flowers:0};
+let unlocked={sunflower:false, dandelion: false, 
+     blossomtree:false
+}; 
+
+const savedWallet=localStorage.getItem("gardenWallet");
+if(savedWallet) wallet=JSON.parse(savedWallet);
+const savedUnlocks  =localStorage.getItem("gardenUnlocks");
+
+if (savedUnlocks ) unlocked=Object.assign(unlocked ,JSON.parse(savedUnlocks))
+const shopItems =[{id:'sunflower' ,cost:{leaves:30, flowers:5}},
+    {id:'dandelion' , cost :{leaves:18, 
+flowers:3}},
+    {id:'blossomtree',cost:{ leaves:45, flowers:9}}
+];
+
 
 
 let plants=[]; 
