@@ -1,4 +1,27 @@
-* {box-sizing: border-box; margin:0; padding:0;} body{
+* {box-sizing: border-box; margin:0; padding:0;}
+:root{
+    --bg: #fff4f8;
+    --panel-bg :#fff7fb; --panel-border:#efbfd2;
+    --text-main :#c94f7c; --text-sub:#b67a93; --text-input:#8d4d67; 
+    --accent:#e75480;
+  --btn-hover-bg:#ffe3ee;
+  --btn-hover-text :#d63384;  
+
+}
+/*not sure that it will look cool  */
+[data-theme="forest"]{
+    --bg:#eef5ea ; ---panel-bg:#f4f9f0;
+    --panel-border:#a9c79c; --text-main:#3e6b3a; --text-sub:#6e8f63;
+    --text-input:#3f5c39; 
+    --accent :#4b7f3a; --btn-hover-bg:#dcefd2; --btn-hover-text:#2f5b2a;
+
+}
+[data-theme ="blossom" ] {--bg:#fff0f5; -panel-bg: #fff5f9; 
+--panel-border:#f3b8d0; 
+--text-main:#c2427a; --text-sub:#c98aa8; --text-input:#96436b; 
+ --accent:#ff6fa5; 
+--btn-hover-bg :#ffd9e9; --btn-hover-text: #c2427a;}
+body{
     background:#fff4f8; font-family: Helvetica, sans-serif; min-height:99vh; display:flex;
     justify-content:center;
 }#wrap{display:flex; flex-direction:column; align-items: center; width:100%;
@@ -66,3 +89,9 @@ margin-bottom:14px;
     color:#b04d76;
 font-size:14px;
  }
+
+ /*2 40*/#spanel{
+    position: fixed ;
+  left: 21px; top:111px; width:221px;
+ background: rgba(0,0,0,.55); color:#fff;
+ border: 1px;}/*todo this feature in other commit as me got some other priorities in site*/
