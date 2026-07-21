@@ -28,32 +28,32 @@ body{
  max-width:716px; min-height:100vh; padding:0 20px;} #header{position:relative; 
 width:100%;text-align: center; padding:2.5rem 0 1.6rem;} #header h1{font-size:22px;
 font-weight:396;
-color: #c94f7c; letter-spacing:0.04em;} #header p {font-size:13px; color: #b67a93;
+color: var(--text-main); letter-spacing:0.04em;} #header p {font-size:13px; color: var(--text-sub);
 margin-top:8px; font-family: monospace;} #stats{
     display:flex;
     gap:21px; justify-content: center;; padding:0.75rem 
     0;
-}.stat{font-size:12px; color:#9b6480; 
-font-family:monospace; }.stat span{color:#e75480; font-weight: bold; 
+}.stat{font-size:12px; color: var(--text-sub);
+font-family:monospace; }.stat span{color:var(--accent); font-weight: bold; 
 margin-left:4px ;} #canvas{
     width:100%;
      max-width:679px;
      height:338px; display: block;
 }#inputarea{width:100% ;max-width:678px; padding:1.5rem 0 2.5rem;
  margin-top: auto;}/* todo add a visual too for this theme as it looks boring
-*/ #typebox{width:100%; background:#fff8fb; 
-border:1px  solid #efbfd2; border-radius :9px; padding:11px 16px; font-size:14px; 
-color:#8d4d68; 
+*/ #typebox{width:100%; background: var(--panel-bg); 
+border:1px  solid var(--panel-border); border-radius :9px; padding:11px 16px; font-size:14px; 
+color: var(--text-input);
 font-family:monospace; resize:none; 
 height:80px; outline:none; 
- transition: border-color 0.2s;} #typebox::placeholder{color:#d3a3b8;}
- #typebox:focus{border-color:#d96c98;} #tip{font-size:16px; color:#b67a93; margin-top:9px; text-align:left; 
+ transition: border-color 0.2s;} #typebox::placeholder{color:var(--text-sub);}
+ #typebox:focus{border-color: var(--accent);} #tip{font-size:16px; color:var(--text-sub); margin-top:9px; text-align:left; 
 font-family:Courier;}
 #clearbtn{
     display:block;
     margin:9px auto 0;
-    font-size:13px; color:#b04d76; background: none ; border :1px solid  #efbfd2; border-radius: 6px ;
- padding:5px 16px; cursor:pointer; font-family:courier; transition: background 0.2s, color 0.2s;}#clearbtn:hover{background:#ffe3ee; color:#d63384;} #downloadbtn{
+    font-size:13px; color: var(--text-sub); background: none ; border :1px solid  var(--panel-border) ; border-radius: 6px ;
+ padding:5px 16px; cursor:pointer; font-family:courier; transition: background 0.2s, color 0.2s;}#clearbtn:hover{background: var(--btn-hover-bg); color:var(--btn-hover-text);} #downloadbtn{
 display:block; margin:14px auto 0; font-size: 16px; color:#b04d76; background: none;;
  border: 1px solid#efbfd2; border-radius :6px;  padding: 6px 18px ;
  cursor: pointer; 
@@ -61,20 +61,34 @@ display:block; margin:14px auto 0; font-size: 16px; color:#b04d76; background: n
  #downloadbtn:hover{background: #ffe3ee; color:#d63384;}
  .hidden{display:none;} 
  #sbtn{position: absolute;
-top:0.4rem; right:0;
+top:0.4rem; right:1rem;
 font-size:12px;
-font-family:courier; color:#b04d76; 
-border: 1px solid#efbfd2; border-radius: 19px;; padding:6px 14px; 
+font-family:courier; color: var(--text-sub) ; 
+border: 1px solid var(--panel-border); border-radius: 19px;; padding:6px 14px; 
  cursor:pointer; 
 transition: background 0.2s,color 0.2s;} #sbtn:hover{
-    background:#ffe3ee; color:#d63384;
+    background:var(--panel-bg); color:var(--text-sub);
 }
+#themeSwitch{
+    position: absolute; top:0.4rem;
+    left :1rem; display:flex;
+gap:7px;}
  
- 
+.themebtn {
+    font-size:11px;
+font-family:courier ; color:var(--text-sub);
+background:var(--panel-bg);  border:1px solid var(--panel-border); border-radius :14px; padding: 6px 10px; 
+cursor:pointer ; transition: background 0.2s,color 0.2s;
+} 
+.themebtn:hover{
+    background:var(--btn-hover-bg); color:var(--btn-hover-text);}.themebtn.active{ background:var(--accent);
+    color: #fff;
+  border-color:var(--accent)}
+
  #soundmenu{position: absolute;
     top:2.6rem;
-    right:1rem; width:222px; 
-    background: #fff7fb; border:1px solid #e2e5ed; 
+    right:1rem; width:262px; 
+    background: var(--panel-bg); border:1px solid var(--panel-border); 
 border-radius:12px;
 padding:16px; box-shadow:0 8px 20px rgba(201,79,124,0.16) ; z-index:9; text-align:left; /*todo improve mobile response with z indexin'*/
 
@@ -86,7 +100,7 @@ margin-bottom:14px;
  }
  .sounditem:last-child{margin-bottom: 0;}.sounditem label { 
     margin-bottom:6px; 
-    color:#b04d76;
+    color:var(--text-sub);
 font-size:14px;
  }
 
@@ -94,4 +108,31 @@ font-size:14px;
     position: fixed ;
   left: 21px; top:111px; width:221px;
  background: rgba(0,0,0,.55); color:#fff;
- border: 1px;}/*todo this feature in other commit as me got some other priorities in site*/
+ border: 1px solid  var(--panel-border); border-radius :14px; 
+padding:16px ;font-family: monospace;
+ backdrop-filter: blur(3px); transition: border-color 0.4s ease;}/* though i dont use ai in css but for this one i used help with backdrop filter as i wanna make this cool*/  #spanel h3{
+ font-size:13px; margin-bottom:10px; font-weight:normal; 
+ letter-spacing: 0.04em; color:var(--accent);
+ } #spanel hr { border:none; 
+border-top: 1px solid rgba(255,255,255,0.2);
+  margin: 10px 0;} .sstat{
+    font-size:12px; margin-bottom: 4px; color: rgba(255,255,255,0.75);
+  } .sstat span{
+
+  
+  color:var(--accent); font-weight: bold; } .sitem{
+margin-bottom: 12px;
+  } 
+.sitem-name{
+     font-size:12px; margin-bottom:2.0001px;} .sitem-cost{ font-size:14px; color:
+    rgba(255,255,255,0.1);
+margin-bottom:6px ;} .buybtn{
+    font-size:11px; font-family:courier; background: rgba(255,255,255,0.1); color:#fff ;
+    border: 1px solid var(--panel-border); border-radius: 6px; padding: 4px 12px;
+cursor:pointer; transition: background 0.2s, border-color 0.4s;
+}
+.buybtn:hover:not(:disabled){background:var(--accent); 
+ border-color:var(--accent);} .buybtn:disabled{opacity:0.4; cursor:not-allowed;} /* credit to geeks4geek for disabled feature*/
+ @media (max-width:1111px){
+    #shoppanel{display:none;}
+ }
