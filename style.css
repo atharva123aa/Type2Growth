@@ -10,20 +10,20 @@
 }
 /*not sure that it will look cool  */
 [data-theme="forest"]{
-    --bg:#eef5ea ; ---panel-bg:#f4f9f0;
+    --bg:#eef5ea ; --panel-bg:#f4f9f0;
     --panel-border:#a9c79c; --text-main:#3e6b3a; --text-sub:#6e8f63;
     --text-input:#3f5c39; 
     --accent :#4b7f3a; --btn-hover-bg:#dcefd2; --btn-hover-text:#2f5b2a;
 
 }
-[data-theme ="blossom" ] {--bg:#fff0f5; -panel-bg: #fff5f9; 
+[data-theme ="blossom" ] {--bg:#fff0f5;  --panel-bg: #fff5f9; 
 --panel-border:#f3b8d0; 
 --text-main:#c2427a; --text-sub:#c98aa8; --text-input:#96436b; 
  --accent:#ff6fa5; 
 --btn-hover-bg :#ffd9e9; --btn-hover-text: #c2427a;}
 body{
-    background:#fff4f8; font-family: Helvetica, sans-serif; min-height:99vh; display:flex;
-    justify-content:center;
+    background:var(--bg); font-family: Helvetica, sans-serif; min-height:99vh; display:flex;
+    justify-content:center;transition:  background  0.4s ease;
 }#wrap{display:flex; flex-direction:column; align-items: center; width:100%;
  max-width:716px; min-height:100vh; padding:0 20px;} #header{position:relative; 
 width:100%;text-align: center; padding:2.5rem 0 1.6rem;} #header h1{font-size:22px;
@@ -134,5 +134,5 @@ cursor:pointer; transition: background 0.2s, border-color 0.4s;
 .buybtn:hover:not(:disabled){background:var(--accent); 
  border-color:var(--accent);} .buybtn:disabled{opacity:0.4; cursor:not-allowed;} /* credit to geeks4geek for disabled feature*/
  @media (max-width:1111px){
-    #shoppanel{display:none;}
+    #spanel{display:none;}
  }
