@@ -165,6 +165,83 @@ flowers:3}},
     {id:'blossomtree',cost:{ leaves:45, flowers:9}}
 ];
 
+function saveWallet(){
+    localStorage.setItem("gardenWallet" ,JSON.stringify(wallet)); // for the stringification i asked chatgpt as without it thhe thing dissapears and no use of local storage
+    localStorage.setItem("gardenUnlock", JSON.stringify(unlocked));
+}
+function renderShop(){
+    document.getElementById('walletLeaves').textContent=wallet.leaves;
+    document.getElementById('walletFlowers').textContent =wallet.flowers;
+    document.getElementById('.buybtn').forEach (btn=>{ const id=btn.dataset.id;
+         const item=shopItems.find(i=>i.id===id);
+         if(unlocked[id]) {
+            btn.textContent='Unlocked';
+         btn.disabled= true; } else{const canAfford=  wallet.leaves>=item.cost.leaves && wallet.flowers>=item.cost.flowers; btn.disabled=!canAfford}
+
+    }
+
+    );
+}
+function buyItem(id){
+    const item= shopItems.find(i=>i.id===id);
+    if (!item|| unlocked[id]) return;
+    if (wallet.leaves>= item.cost.leaves&& wallet.flowers>=item.cost.flowers){ wallet.leaves-=item.cost.leaves; wallet.flowers -= item.cost.flowers;
+unlocked[id] =true; 
+saveWallet();
+renderShop();
+} 
+}
+//fuckin math again #2 
+function drawSunflower(x,y){ ctx.save();
+    ctx.strokeStyle='#4b7f3a';  ctx.lineWidth ='4'; ctx.beginPath(); ctx.moveTo(x,y); 
+    ctx.lineTo(x,y-73); ctx.stroke();
+ctx.translate(x,y-81);
+for (let i =0;i<16; i++){
+    ctx.save(); ctx.rotate((i/16)* Math.PI *2); ctx.fillstyle='#ffcc33'; 
+    ctx.beginPath(); ctx.ellipse
+    (16,0,12,6,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+    
+} ctx.fillStyle='#7a4a24'; ctx.beginPath(); ctx.arc(0,0,10,0,Math.PI*2); ctx.fill();
+ ctx.restore ();
+} 
+
+
+function drawDandelion(x,y){
+ctx.save();
+ctx.strokeStyle= '#6e8f4f' ;ctx.lineWidth= 2.6; ctx.beginPath(); ctx.moveTo(x,y); 
+ctx.lineTo(x, y-55 ); 
+ctx.stroke(); ctx.translate(x,y-60); for(
+    let i=0; i<24;i++){ const a=(i/24)*Math.PI*2; 
+        ctx.strokeStyle=' rgba(255,255,255,0.85)'; 
+        ctx.lineWidth=1; ctx.beginPath();
+        ctx.moveTo(0,0); ctx.lineTo(Math.cos(a)*13,Math.sin(a)*13)
+    } ctx.fillStyle ='#fff9e6'; 
+    ctx.beginPath(); ctx.arc(0,0,4,0,Math.PI*2); ctx.fill(); 
+    ctx.restore();
+
+} function drawBlossomTree(x,y){ ctx.save();
+    ctx.strokeStyle='#6e4f45'; ctx.lineWidth=5; ctx.beginPath();
+ctx.moveTo(x,y);    ctx.lineTo(x-6,y-50); ctx.stroke(); ctx.lineWidth =2.99999; ctx.beginPath();
+ctx.moveTo(x-6,y-50); ctx.lineTo(x-24,y-72);
+ctx.moveTo(x-6,y-50); ctx.lineTo(x+14,y-68);
+    ctx.stroke(); // gonna try the ts for 1st time can be bit ugly 
+   const clusters=[[x-24,y-72],[x+14,y-68],[x-6,y-58]];
+   for(const c of  clusters) { for(let i=0;i<6;i++){
+    ctx.fillStyle ="#ffc2d8"; ctx.globalAlpha=.85;
+    ctx.beginPath() ;ctx.ellipse(c[0]+ rnd(-10,10),c[1]+ rnd(-8,8),6,4,rnd(0,Math.PI),0,Math.PI*2); ctx.fill();
+
+
+   }
+}
+ctx.globalAlpha =1;
+ctx.restore();} 
+function drawSpecialPlants(){
+    if(unlocked.sunflower) drawSunflower(W-70,H-18);
+        if(unlocked.dandelion) drawDandelion(W-30, H-18);
+            if(unlocked.blossomtree) drawBlossomTree(W-130,H-18);
+}
+
+
 
 
 let plants=[]; 
