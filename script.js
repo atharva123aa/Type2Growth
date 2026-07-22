@@ -167,12 +167,12 @@ flowers:3}},
 
 function saveWallet(){
     localStorage.setItem("gardenWallet" ,JSON.stringify(wallet)); // for the stringification i asked chatgpt as without it thhe thing dissapears and no use of local storage
-    localStorage.setItem("gardenUnlock", JSON.stringify(unlocked));
+    localStorage.setItem("gardenUnlocks", JSON.stringify(unlocked));
 }
 function renderShop(){
     document.getElementById('walletLeaves').textContent=wallet.leaves;
     document.getElementById('walletFlowers').textContent =wallet.flowers;
-    document.getElementById('.buybtn').forEach (btn=>{ const id=btn.dataset.id;
+    document.querySelectorAll('.buybtn').forEach (btn=>{ const id=btn.dataset.id;
          const item=shopItems.find(i=>i.id===id);
          if(unlocked[id]) {
             btn.textContent='Unlocked';
@@ -197,7 +197,8 @@ function drawSunflower(x,y){ ctx.save();
     ctx.lineTo(x,y-73); ctx.stroke();
 ctx.translate(x,y-81);
 for (let i =0;i<16; i++){
-    ctx.save(); ctx.rotate((i/16)* Math.PI *2); ctx.fillstyle='#ffcc33'; 
+    ctx.save(); ctx.rotate((i/16)* Math.PI *2);
+     ctx.fillStyle='#ffcc33'; 
     ctx.beginPath(); ctx.ellipse
     (16,0,12,6,0,0,Math.PI*2); ctx.fill(); ctx.restore();
     
@@ -206,6 +207,8 @@ for (let i =0;i<16; i++){
 } 
 
 
+// bro was invisible because of sky color and was looking on night only
+//todo fix it later 
 function drawDandelion(x,y){
 ctx.save();
 ctx.strokeStyle= '#6e8f4f' ;ctx.lineWidth= 2.6; ctx.beginPath(); ctx.moveTo(x,y); 
@@ -215,7 +218,7 @@ ctx.stroke(); ctx.translate(x,y-60); for(
         ctx.strokeStyle=' rgba(255,255,255,0.85)'; 
         ctx.lineWidth=1; ctx.beginPath();
         ctx.moveTo(0,0); ctx.lineTo(Math.cos(a)*13,Math.sin(a)*13)
-    } ctx.fillStyle ='#fff9e6'; 
+   ; ctx.stroke(); } ctx.fillStyle ='#fff9e6'; 
     ctx.beginPath(); ctx.arc(0,0,4,0,Math.PI*2); ctx.fill(); 
     ctx.restore();
 
@@ -324,6 +327,8 @@ if (isSpace|| (tip.depth>2 && Math.random() <0.4)
             center:this.flowerCenter, 
             petals:5+ Math.floor(freq/ 2), rot:Math.random()* Math.PI}; 
                 totalFlowers++;
+                wallet.flowers++; 
+                saveWallet();
                 this.flowers.push(tip.flower);
         }
     } else{ this.extend(tip,speed,freq);
@@ -374,7 +379,9 @@ addLeaf(seg){ //time to take claude help a bit its
     const lAngle=seg.angle+ side *rnd(0.6,1.2);
     const lLen=rnd(12,27);
 seg.leaves.push({x:bx,y:by,angle: lAngle, len:lLen, 
-    color:this.leafColor});totalLeaves ++;} 
+    color:this.leafColor});totalLeaves ++;
+wallet.leaves++; saveWallet();
+} 
 burst() {
     if (!this.flowers.length) return;
     const f=pick(this.flowers)
@@ -395,7 +402,7 @@ curl(tip) { const dir=Math.random()< 0.5? 1:-1;
 dropLeaf() {  //fucking circle math again
     const gx=this.x+rnd(-40,40);
     const gy=H -20+rnd(-4,4) ;
-this.fallen.push({x:gx,y:gy,angle:rnd(0,Math.PI*2),len:rnd(12,20),color:this.leafColor}); totalLeaves++;
+this.fallen.push({x:gx,y:gy,angle:rnd(0,Math.PI*2),len:rnd(12,20),color:this.leafColor}); totalLeaves++; wallet.leaves++; saveWallet();
 
 }
 
@@ -495,14 +502,15 @@ function updateStats() {
     document.getElementById('fc').textContent=totalFlowers;
     document.getElementById('cc').textContent=charCount;
 } 
-function  render() {
+function render() {
     ctx.clearRect(0,0,W,H);
     drawBackground();
+    drawSpecialPlants();
     drawStars();
     for (const plant of plants ) {
         plant.draw();}
 drawParticles();
-    updateStats();}
+    updateStats(); renderShop();}
     let pLen =0;
     typebox.addEventListener('input', () => {
         const val=typebox.value;
@@ -578,8 +586,18 @@ function startMusic(){
  });}
 document.addEventListener("pointerdown",startMusic, {once:true});
 document.addEventListener("keydown",startMusic ,{once:true});
-
-
+document.querySelectorAll('.buybtn').forEach(btn=>{btn.addEventListener('click',()=>buyItem(btn.dataset.id));});
+renderShop();
+const themeBtns= document.querySelectorAll('.themebtn');
+function applyTheme(theme){
+    document.documentElement.setAttribute('data-theme', theme);
+    themeBtns.forEach(b=>b.classList.toggle('active', b.dataset.theme===theme));
+    localStorage.setItem('gardenTheme',theme);
+}
+themeBtns.forEach(btn=>{
+    btn.addEventListener('click', ()=>applyTheme(btn.dataset.theme));});
+    const savedTheme= localStorage.getItem('gardenTheme') || 'normal'; 
+    applyTheme(savedTheme);
     
 
 drawBackground();
