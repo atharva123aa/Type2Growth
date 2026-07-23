@@ -8,8 +8,8 @@ const soundmenu = document.getElementById("soundmenu");
 const rainVolume=document.getElementById("rainVolume");
 const blossomVolume=document.getElementById("blossomVolume");
 const forestVolume =document.getElementById("forestVolume");
-const W=679;
-const H=338;
+const W=860;
+const H=440;
 canvas.width= W;
  canvas.height=H;
 const VOWELS= new Set(['a','e','i','o','u','y']) //one extra vowel made by me :}
@@ -348,7 +348,7 @@ if (isSpace|| (tip.depth>2 && Math.random() <0.4)
 
 }
 branch(tip){
-    if (tip.depth> 8) return;
+    if (tip.depth> 14) return;
     const spread=rnd(0.3,0.7);
     const  angles=[tip.angle-spread, tip.angle+spread ];
     const newTips=[];
@@ -588,6 +588,23 @@ document.addEventListener("pointerdown",startMusic, {once:true});
 document.addEventListener("keydown",startMusic ,{once:true});
 document.querySelectorAll('.buybtn').forEach(btn=>{btn.addEventListener('click',()=>buyItem(btn.dataset.id));});
 renderShop();
+const spanelEl=document.getElementById('spanel');
+const sToggleBtn=document.getElementById('sToggle');
+function setsCollapsed(collapsed){
+    spanelEl.classList.toggle('collapsed' , collapsed);
+    sToggleBtn.textContent =collapsed ? '☑️' :'✂️';
+    localStorage.setItem('sCollapsed',collapsed? '1':'0');
+} sToggleBtn.addEventListener('click',(e)=>
+{ e.stopPropagation();
+    setsCollapsed(!spanelEl.classList.contains('collapsed')); 
+
+});
+spanelEl.addEventListener('click' ,()=>{if(spanelEl.classList.contains('collapsed') )
+    setsCollapsed(false); 
+}); 
+setsCollapsed(localStorage.getItem('sCollapsed')==='1');
+
+
 const themeBtns= document.querySelectorAll('.themebtn');
 function applyTheme(theme){
     document.documentElement.setAttribute('data-theme', theme);
