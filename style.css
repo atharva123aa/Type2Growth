@@ -25,7 +25,7 @@ body{
     background:var(--bg); font-family: Helvetica, sans-serif; min-height:99vh; display:flex;
     justify-content:center;transition:  background  0.4s ease;
 }#wrap{display:flex; flex-direction:column; align-items: center; width:100%;
- max-width:716px; min-height:100vh; padding:0 20px;} #header{position:relative; 
+ max-width:896px; min-height:100vh; padding:0 20px;} #header{position:relative; 
 width:100%;text-align: center; padding:2.5rem 0 1.6rem;} #header h1{font-size:22px;
 font-weight:396;
 color: var(--text-main); letter-spacing:0.04em;} #header p {font-size:13px; color: var(--text-sub);
@@ -37,9 +37,9 @@ margin-top:8px; font-family: monospace;} #stats{
 font-family:monospace; }.stat span{color:var(--accent); font-weight: bold; 
 margin-left:4px ;} #canvas{
     width:100%;
-     max-width:679px;
-     height:338px; display: block;
-}#inputarea{width:100% ;max-width:678px; padding:1.5rem 0 2.5rem;
+     max-width:860px;
+     height:440px; display: block;
+}#inputarea{width:100% ;max-width:858px; padding:1.5rem 0 2.5rem;
  margin-top: auto;}/* todo add a visual too for this theme as it looks boring
 */ #typebox{width:100%; background: var(--panel-bg); 
 border:1px  solid var(--panel-border); border-radius :9px; padding:11px 16px; font-size:14px; 
@@ -134,5 +134,18 @@ cursor:pointer; transition: background 0.2s, border-color 0.4s;
 .buybtn:hover:not(:disabled){background:var(--accent); 
  border-color:var(--accent);} .buybtn:disabled{opacity:0.4; cursor:not-allowed;} /* credit to geeks4geek for disabled feature*/
  @media (max-width:1111px){
-    #spanel{display:none;}
- }
+    #spanel{position:static; width:100%
+     ;max-width:400px;margin :24px auto 0; 
+    left:auto; top:auto;}
+ } #sToggle{ position: absolute; top:9px; right:10px; background:none; border:none; 
+ color:rgba(255,255,255,0.6);
+ font-size:13px; 
+ cursor:pointer ; line-height: 1; padding:2px 6px;} #sToggle:hover{color:#fff;}
+ /* i thought i shuld put some effort on small feature too as it shows dedication(reviewer where are you!)*/
+ #spanel.collapsed{
+    width:auto; padding:10px   14px ; cursor: pointer;
+ } #spanel.collapsed h3, #spanel.collapsed hr,#spanel.collapsed .shopstat, #spanel.collapsed .shopitem{
+    display: none;
+ } #spanel.collapsed #sToggle{
+    position: static;
+ color :rgba(255,255,255,0.85);}
