@@ -138,7 +138,37 @@ ctx.fill();
 ctx.globalAlpha =1 ;
  ctx.restore();}}
 }
+/*will keep this feature rare so thers more to explore*/
+let sparkles=[];
+function trySpawnSpecialEffect(){
+if (Math.random() >0.003) return;
+const allFlowers= [];
+for (const p of plants) 
+    allFlowers.push(...p.flowers);
+if(!allFlowers.length) return;
+const f=pick(allFlowers);
+for( let i=0; i<10; 
+    i++
+){sparkles.push({
+    x:f.x,  y:f.y, vx:rnd(-1.2,1.2) ,vy:rnd(-1.6,-0.5),
+life:1, size:rnd(2,4)});
 
+}
+
+}
+function updateSparkles(){
+    for(const s of sparkles){
+        s.x+=s.vx; 
+        s.y+=s.vy; s.life=0.02;
+    } sparkles= sparkles.filter(s=>s.life >0);
+}
+function drawSparkles(){ for(const s of sparkles){
+    ctx.save(); ctx.globalAlpha =Math.max(0,s.life);  
+ctx.fillStyle='#fff3b0';  ctx.beginPath();
+ctx.arc (s.x,s.y,s.size,0,Math.PI*2)// NOW I M GOOD IN ARCS
+ctx.fill(); ctx.restore();
+} 
+}
 function drawStars() {
     if (currentMode!== 'night') return; const t=Date.now()/600;
     ctx.fillStyle="#fff" 
@@ -246,13 +276,47 @@ function drawSpecialPlants(){
 
 
 
-
+let boost=0;
+letboostLastTick= Date.now();
+function updateBoost(typedfast){
+    const now= Date.now(); const dt =(now-boostLastTick)/1000;
+    boostLastTick =now; if (typedFast) {
+        boost= clamp(boost+ 0.09,0,1);} else{
+    
+ boost =clamp(boost-dt *0.15,0,1);}} function drawBoostMeter(){
+    if(boost<= 0.02) return; const 
+barW = 140,barH= 6; 
+const x=W-barW-14,y =14; ctx.save();
+ctx.globalAlpha =0.86;
+ctx.fillStyle='rgba(255,255,255,0.25)';
+const grad=ctx.createLinearGradient(x,0,x+barW,0);
+grad.addColorStop (0,'#ffd166'); 
+grad.addColorStop(1,'#ff6fa5');
+ctx.fillStyle =grad; ctx.fillRect(x,y,barW*boost,barH); 
+ctx.restore();
+ }
 let plants=[]; 
 let lastTime=Date.now();
 let  charCount= 0;
 let totalStems=0;
 let totalLeaves=0;
 let  totalFlowers=0;
+let LastTypedAt=date.now();
+function applyDecay() {
+    const idleMs= Date.now()- lastTypedAt; if(idleMs <15000 ) return;
+    const decayAmount= 0.00025;
+    for(const plant of plants){
+    wiltSeg(plant.root,decayAmount);
+    for(const f of plant.fallen) f.wilt=
+    clamp((f.wilt|0)+decayAmount,0,1);    }
+} function wiltSeg( seg,amount){
+    seg.wilt=clamp((seg.wilt|| 0)+amount,0,1);
+    for (const leaf of seg.leaves)leaf.wilt= clamp((leaf.wilt|| 0 )+ amount,0,1);
+if (seg.flower)seg.flower.wilt= clamp((seg.flower.wilt||0)+amount,0,1);
+for (const c of seg.children) 
+    wiltSeg(c,amount);
+
+}
 function pick(arr) {
     return arr[Math.floor(Math.random() * arr.length)];}
 function rnd( a,b){
@@ -409,12 +473,17 @@ this.fallen.push({x:gx,y:gy,angle:rnd(0,Math.PI*2),len:rnd(12,20),color:this.lea
     draw(){ this.drawSeg(this.root);
     for (const lf  of this.fallen) this.drawLeaf(lf);}
     drawSeg(seg){
-        ctx.strokeStyle= seg.color ;
+        const wilt =seg.wilt||0; ctx.save();
+        ctx.globalAlpha=1-wilt*0.6;
+
+        ctx.strokeStyle= wilt>0.5 ?'#8a7860' : seg.color;
         ctx.lineWidth =seg.thick ;
-        ctx.lineCap='round';ctx.beginPath();
+        ctx.lineCap='round';
+        ctx.beginPath();
         ctx.moveTo(seg.x,seg.y);
         ctx.lineTo(seg.ex,seg.ey);
         ctx.stroke();
+        ctx.restore();
         for (const leaf of seg.leaves)
         this.drawLeaf(leaf);
        
@@ -424,11 +493,12 @@ this.fallen.push({x:gx,y:gy,angle:rnd(0,Math.PI*2),len:rnd(12,20),color:this.lea
 
 // todo draw for cherry bolsom to
     } drawLeaf(leaf){
+        const wilt=leaf.wilt||0;
         ctx.save();
         ctx.translate(leaf.x,leaf.y)
         ctx.rotate(leaf.angle);
-        ctx.fillStyle =leaf.color;
-    ctx.globalAlpha=0.88;
+        ctx.fillStyle =wilt>0.5 ? '#c9a15a':leaf.color;
+    ctx.globalAlpha=0.88* (1-wilt *0.5 );
 ctx.beginPath();
          ctx.ellipse(leaf.len*0.5,
             0,
@@ -438,9 +508,10 @@ ctx.beginPath();
          )  ; ctx.fill();
         ctx.globalAlpha = 1;
     ctx.restore();  } drawFlower(f){
+        const wilt=f.wilt || 0;
         ctx.save();
         ctx.translate(f.x,f.y)
-        for (let i=0;i<f.petals; i++){ctx.save();
+        ctx.globalAlpha =1-wilt*0.7;        for (let i=0;i<f.petals; i++){ctx.save();
 
 //some feature to be added here
             ctx.rotate(f.rot + (i/f.petals)*Math.PI* 2);
@@ -506,18 +577,22 @@ function render() {
     ctx.clearRect(0,0,W,H);
     drawBackground();
     drawSpecialPlants();
+    drawBoostMeter() ;
     drawStars();
     for (const plant of plants ) {
         plant.draw();}
-drawParticles();
+drawParticles(); drawSparkles();
     updateStats(); renderShop();}
     let pLen =0;
     typebox.addEventListener('input', () => {
+        lastTypedAt=Date.now();
         const val=typebox.value;
         const now=Date.now();
         const dt=now -lastTime;
         const speed= clamp(1000 /(dt+1),0,20);
         lastTime=now ;
+        updateBoost(dt<180);
+        speed= speed*(1+boost*1.5);
     if (val.length<pLen){
         pLen=val.length;
         return;
@@ -630,7 +705,11 @@ function loop(){  // as my alch theme was endless so this was neccesary
  updateAudioFade();
  spawnParticle();
  updateParticles();
- render();   requestAnimationFrame(loop);
+ applyDecay();
+ render();   
+ trySpawnSpecialEffect();
+ updateSparkles();
+ requestAnimationFrame(loop);
  
-} requestAnimationFrame(loop);
+} requestAnimationFrame(p);
 scheduleNextMode();
