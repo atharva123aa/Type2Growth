@@ -159,7 +159,7 @@ life:1, size:rnd(2,4)});
 function updateSparkles(){
     for(const s of sparkles){
         s.x+=s.vx; 
-        s.y+=s.vy; s.life=0.02;
+        s.y+=s.vy; s.life-=0.02;
     } sparkles= sparkles.filter(s=>s.life >0);
 }
 function drawSparkles(){ for(const s of sparkles){
@@ -277,8 +277,8 @@ function drawSpecialPlants(){
 
 
 let boost=0;
-letboostLastTick= Date.now();
-function updateBoost(typedfast){
+let boostLastTick= Date.now();
+function updateBoost(typedFast){
     const now= Date.now(); const dt =(now-boostLastTick)/1000;
     boostLastTick =now; if (typedFast) {
         boost= clamp(boost+ 0.09,0,1);} else{
@@ -301,14 +301,14 @@ let  charCount= 0;
 let totalStems=0;
 let totalLeaves=0;
 let  totalFlowers=0;
-let LastTypedAt=date.now();
+let lastTypedAt=Date.now();
 function applyDecay() {
     const idleMs= Date.now()- lastTypedAt; if(idleMs <15000 ) return;
     const decayAmount= 0.00025;
     for(const plant of plants){
     wiltSeg(plant.root,decayAmount);
     for(const f of plant.fallen) f.wilt=
-    clamp((f.wilt|0)+decayAmount,0,1);    }
+    clamp((f.wilt||0)+decayAmount,0,1);    }
 } function wiltSeg( seg,amount){
     seg.wilt=clamp((seg.wilt|| 0)+amount,0,1);
     for (const leaf of seg.leaves)leaf.wilt= clamp((leaf.wilt|| 0 )+ amount,0,1);
@@ -589,7 +589,7 @@ drawParticles(); drawSparkles();
         const val=typebox.value;
         const now=Date.now();
         const dt=now -lastTime;
-        const speed= clamp(1000 /(dt+1),0,20);
+        let speed= clamp(1000 /(dt+1),0,20);
         lastTime=now ;
         updateBoost(dt<180);
         speed= speed*(1+boost*1.5);
@@ -711,5 +711,5 @@ function loop(){  // as my alch theme was endless so this was neccesary
  updateSparkles();
  requestAnimationFrame(loop);
  
-} requestAnimationFrame(p);
+} requestAnimationFrame(loop);
 scheduleNextMode();
