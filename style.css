@@ -23,7 +23,7 @@
 --btn-hover-bg :#ffd9e9; --btn-hover-text: #c2427a;}
 body{
     background:var(--bg); font-family: Helvetica, sans-serif; min-height:99vh; display:flex;
-    justify-content:center;transition:  background  0.4s ease;
+    justify-content:center; align-items:flex-start; gap:23px; flex-wrap:wrap; padding:0 17px ;transition:  background  0.4s ease;
 }#wrap{display:flex; flex-direction:column; align-items: center; width:100%;
  max-width:896px; min-height:100vh; padding:0 20px;} #header{position:relative; 
 width:100%;text-align: center; padding:2.5rem 0 1.6rem;} #header h1{font-size:22px;
@@ -105,8 +105,9 @@ font-size:14px;
  }
 
  /*2 40*/#spanel{
-    position: fixed ;
-  left: 21px; top:111px; width:221px;
+    position: sticky ; align-self:flex-start;
+   top:111px; width:221px ;
+   flex-shrink:0;
  background: rgba(0,0,0,.55); color:#fff;
  border: 1px solid  var(--panel-border); border-radius :14px; 
 padding:16px ;font-family: monospace;
@@ -134,9 +135,9 @@ cursor:pointer; transition: background 0.2s, border-color 0.4s;
 .buybtn:hover:not(:disabled){background:var(--accent); 
  border-color:var(--accent);} .buybtn:disabled{opacity:0.4; cursor:not-allowed;} /* credit to geeks4geek for disabled feature*/
  @media (max-width:1111px){
-    #spanel{position:static; width:100%
-     ;max-width:400px;margin :24px auto 0; 
-    left:auto; top:auto;}
+    #spanel{width:100%
+     ;max-width:420px;margin : 0 auto ; 
+     top:auto;}
  } #sToggle{ position: absolute; top:9px; right:10px; background:none; border:none; 
  color:rgba(255,255,255,0.6);
  font-size:13px; 
@@ -150,9 +151,9 @@ cursor:pointer; transition: background 0.2s, border-color 0.4s;
     position: static;
  color :rgba(255,255,255,0.85);} 
  #buffpanel{
-    position :fixed; 
-    right:21px; top:111px; 
-    width:237px; background:linear-gradient(161deg,rgba(20,15,25,0.7),rgba(10,8,15,0,.75)); 
+    position :stciky;  align-self: flex-start;
+ top:111px; 
+    width:237px;  flex-shrink:0;background:linear-gradient(161deg,rgba(20,15,25,0.7),rgba(10,8,15,0.75)); 
  color:#fff; border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:18px;
 font-family:monospace; 
 backdrop-filter: blur(11px) saturate(137%) ; 
@@ -166,16 +167,16 @@ background:linear-gradient(90deg, #ffd166, #ff6fa5, #9fd3ff);
 margin-bottom: 16px;
 padding: 12px 12px 12px   14px; border-radius: 13px; 
  border-left: 3px solid rgba(255,255,255,0.25);
- background:rgba(255,255,255,0.4);
+ background:rgba(255,255,255,0.04);
  transition: background 0.3s ease, transform 0.2s ease, border-color 0.3s ease; overflow:hidden;} .bi:last-child{margin-bottom: 0;}
  .bi:hover{background:rgba(255,255,255,0.08); transform :translateX(-2px);}
 
  .bi-name{font-size:12.7px; margin-bottom :3px; 
     font-weight:bold; letter-spacing:0.02em;}
-.bi-desc{ font-size: 10px; color:rgba(2255,255,255,0.5); margin-bottom: 6px; line-height:1.47;}
-.bi-cost {font-size:11px;  color:rgba(20,15,25,0.7); margin-bottom:8px; display:inline-block;
+.bi-desc{ font-size: 10px; color:rgba(255,255,255,0.5); margin-bottom: 6px; line-height:1.47;}
+.bi-cost {font-size:11px;  color:rgba(255,255,255,0.7); margin-bottom:8px; display:inline-block;
 padding: 2px  8px;; border-radius: 10px; background:rgba(255,255,255,0.08);}
-.bi[data-buff="rain"]{border-left-color:#7ec8ff;} .bi[data-buff="rain"] .bi-name{color :#ffe3a3; }
+.bi[data-buff="rain"]{border-left-color:#7ec8ff;} .bi[data-buff="rain"] .bi-name{color :#bfe4ff; }
 .bi[data-buff="rain"]::after{
     content:''; 
     position:absolute;
@@ -192,9 +193,60 @@ transition:opacity 0.3s;
 
 
 }.bi[data-buff="sun"]:hover::after{
-    opacity :0;
-} .bi[data-buff="sakura"]{border-left-color :#ff9fc4;}
+    opacity :1;
+} .bi[data-buff="sakura"]{border-left-color :#ff9fc4;} .bi[data-buff="sakura"] .bi-name{color:#ffc9de;}
 .bi[data-buff="sakura"]::after{content:''; position:absolute; inset:0 ; pointer-events: none; opacity:0;
-background:radial-gradient( circle at 20% 0%, #FF9FC4, TRANSPARENT 60%); TRANSITION:OPACITY 0.3S;}
+background:radial-gradient( circle at 20% 0%, #FF9fc440, transparent 60%); transition:opacity 0.3S;}
 .bi[data-buff="sakura"]:HOVER::AFTER{opacity :1 ;}
-/*TODO BUTTONS IN NEXT CMT
+/*<s>TODO BUTTONS IN NEXT CMT </s>  and here i come comepeleting*/
+.buffbtn{ 
+position: relative; z-index:1; font-size:9px;  font-family:courier; font-weight:bold ; letter-spacing:0.03em;
+background:rgba(255,255,255,0.08); color: #fff; border:1px solid rgba(255,255,255,0.25); border-radius :21px; padding :5px 16px; cursor:pointer; transition: background  0.2s, border-color 0.3s, transform 0.15s, box-shadow 0.3s;
+} /* i get intuton that this feature will be broke asf as i dont have enough experience in doing these cool thingy*/
+.bi[data-buff="rain"] .buffbtn:hover:not(:disabled){background:#7EC8FF; BORDER-COLOR:#7EC8FF; COLOR:#08243A;
+BOX-SHADOW :0 0  16PX #7EC8FF80 ;} .bi[data-buff="sun"] .buffbtn:hover:not(:disabled){background: #ffcb61; border-color:#ffcb61; color:#3a2705; box-shadow: 0 0  16px #ffcb6180;}
+.bi[data-buff="sakura"] .buffbtn:hover:not(:disabled){ background:#ff9fc4; border-color:#ff9fc4; color: #3a0a20; box-shadow : 0 0 16px 
+#ff9fc4;  } 
+.buffbtn:active:not(:disabled){transform :scale(0.95) ;}
+.buffbtn:disabled{
+    opacity: 0.35; cursor:not-allowed;
+} 
+.bi[data-buff="rain"] .buffbtn.live{background: #7ec8ff; border-color:#7ec8ff; color :#08243a; animation:pulseRain 1.4s ease-in-out infinite;}
+.bi[data-buff="sun"] .buffbtn.live{background: #ffcb61; border-color:#ffcb61; color :#3a2705; animation:pulseSun 1.4s ease-in-out infinite;}
+.bi[data-buff="sakura"] .buffbtn.live{background: #ff9fc4; border-color:#ff9fc4; color :#3a0a20; animation:pulseSakura 1.4s ease-in-out infinite;}
+
+@keyframes pulseRain{0%,100%{box-shadow :0 0 0 0 rgba(126,200,255,0.5);}50%{box-shadow: 0 0 0 8px rgba(126,200,255 ,0);}
+
+} @keyframes pulseSun{0% ,100%{box-shadow:0 0 0 0 rgba(255,203,97, 0.5);}50%{box-shadow:0 0  0 8px rgba(255,203,97,0);} } @keyframes pulseSakura{0% ,100%{box-shadow:0 0 0 0 rgba(255,159,196,0.5 );}50%{box-shadow:0  0 0 8px rgba(255,159,196,0);} }
+.bi.live-glow{ background :rgba(255,255,255,0.07);}
+.bi[data-buff="rain"].live-glow{box-shadow:inset 0 0 24px rgba(126,200 ,255,0.15);}
+.bi[data-buff="sun"].live-glow{box-shadow:inset 0 0 24px rgba(255,203,97,0.15);}
+.bi[data-buff="sakura"].live-glow{box-shadow:inset 0 0 24px rgba(255,159,196,.15);}
+.bufftimer{
+    margin-top:8px; height: 5px ; 
+    border-radius :3px; overflow:hidden; 
+    background:rgba(255,255,255,0.1); 
+
+    display: none;
+}
+.bufftimer.active{display:block;} .bufftimer-fill {
+    height:100%; transition: width 0.3s linear;
+    border-radius: 3px; 
+
+}.bi[data-buff="rain"] .bufftimer-fill{
+    background:linear-gradient(90deg, #4ba030,#bfe4ff);
+
+}.bi[data-buff="sun"] .bufftimer-fill{
+    background:linear-gradient(90deg, #e08a1f,#ffe3a3);
+
+}.bi[data-buff="sakura"] .bufftimer-fill{
+    background:linear-gradient(90deg, #e0538a,#ffc9de);
+
+}
+.bi-name:before{content:'🌟'; opacity:0.7; 
+font-size:9px;}
+
+@media(max-width:1111px){  /*11 11 forever manifesting*/
+
+#buffpanel{
+width:100%; max-width: 420px; margin:0 auto;  top:auto;}}
