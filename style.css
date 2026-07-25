@@ -148,4 +148,30 @@ cursor:pointer; transition: background 0.2s, border-color 0.4s;
     display: none;
  } #spanel.collapsed #sToggle{
     position: static;
- color :rgba(255,255,255,0.85);}
+ color :rgba(255,255,255,0.85);} 
+ #buffpanel{
+    position :fixed; 
+    right:21px; top:111px; 
+    width:237px; background:linear-gradient(161deg,rgba(20,15,25,0.7),rgba(10,8,15,0,.75)); 
+ color:#fff; border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:18px;
+font-family:monospace; 
+backdrop-filter: blur(11px) saturate(137%) ; 
+
+ box-shadow:0 10px 42px rgba(0,0,0,.35), inset 0  1px 0 rgba(255,255,255,0.8); transition : border-color 0.4s ease;}#buffpanel h3 {
+    font-size:13px ; margin-bottom:14px; font-weight:normal;; letter-spacing :0.08em;
+text-transform: uppercase; 
+background:linear-gradient(90deg, #ffd166, #ff6fa5, #9fd3ff); 
+-webkit-background-clip: text; background-clip:text; /*tbh i used ai to describe what i wanted and it gave me cool feature so yes first time ai usage in this css*/ color :transparent; text-align :center; }
+.bi{position: relative;
+margin-bottom: 16px;
+padding: 12px 12px 12px   14px; border-radius: 13px; 
+ border-left: 3px solid rgba(255,255,255,0.25);
+ background:rgba(255,255,255,0.4);
+ transition: background 0.3s ease, transform 0.2s ease, border-color 0.3s ease; overflow:hidden;} .bi:last-child{margin-bottom: 0;}
+ .bi:hover{background:rgba(255,255,255,0.08); transform :translateX(-2px);}
+
+ .bi-name{font-size:12.7px; margin-bottom :3px; 
+    font-weight:bold; letter-spacing:0.02em;}
+.bi-desc{ font-size: 10px; color:rgba(2255,255,255,0.5); margin-bottom: 6px; line-height:1.47;}
+.bi-cost {font-size:11px;  color:rgba(20,15,25,0.7); margin-bottom:8px; display:inline-block;
+padding: 2px  8px;; border-radius: 10px; background:rgba(255,255,255,0.08);}
