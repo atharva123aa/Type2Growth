@@ -175,3 +175,26 @@ padding: 12px 12px 12px   14px; border-radius: 13px;
 .bi-desc{ font-size: 10px; color:rgba(2255,255,255,0.5); margin-bottom: 6px; line-height:1.47;}
 .bi-cost {font-size:11px;  color:rgba(20,15,25,0.7); margin-bottom:8px; display:inline-block;
 padding: 2px  8px;; border-radius: 10px; background:rgba(255,255,255,0.08);}
+.bi[data-buff="rain"]{border-left-color:#7ec8ff;} .bi[data-buff="rain"] .bi-name{color :#ffe3a3; }
+.bi[data-buff="rain"]::after{
+    content:''; 
+    position:absolute;
+    inset:0; pointer-events:none; opacity:0;background: radial-gradient(circle at 20% 0%, #7EC8FF40, transparent 54%);
+transition: opacity 0.3s;} .bi[data-buff="rain"]:hover::after{opacity:1;}
+
+.bi[data-buff="sun"]{border-left-color: #ffcb61;}
+.bi[data-buff="sun"] .bi-name{ color :#ffe3a3;}
+.bi[data-buff="sun"]::after{
+content:''; position:absolute; 
+inset: 0; pointer-events: none; opacity: 0;
+background:radial-gradient(circle at 20% 0%,#ffcb6140, transparent 61%);
+transition:opacity 0.3s; 
+
+
+}.bi[data-buff="sun"]:hover::after{
+    opacity :0;
+} .bi[data-buff="sakura"]{border-left-color :#ff9fc4;}
+.bi[data-buff="sakura"]::after{content:''; position:absolute; inset:0 ; pointer-events: none; opacity:0;
+background:radial-gradient( circle at 20% 0%, #FF9FC4, TRANSPARENT 60%); TRANSITION:OPACITY 0.3S;}
+.bi[data-buff="sakura"]:HOVER::AFTER{opacity :1 ;}
+/*TODO BUTTONS IN NEXT CMT
