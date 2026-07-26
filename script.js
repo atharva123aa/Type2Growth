@@ -404,13 +404,15 @@ function rkfs(){
     charTimestamps.push(now) ;
     charTimestamps =charTimestamps.filter(t=>
         now-t<3000);}
- 
+ let speedoLastTick =Date.now();
     function updateSpeedometer(){
     const now=Date.now();
+    const dt=(now-speedoLastTick)/1000;
+    speedoLastTick = now;
     charTimestamps=charTimestamps.filter(t=> now-t < 3000);
          if(charTimestamps.length<2){
-            typingSpeedWPM =Math.max(0, typingSpeedWPM-1);
-            return;
+            typingSpeedWPM =Math.max(0, typingSpeedWPM-dt*40);
+            
         } else{
             
         
