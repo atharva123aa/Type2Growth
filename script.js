@@ -8,6 +8,8 @@ const soundmenu = document.getElementById("soundmenu");
 const rainVolume=document.getElementById("rainVolume");
 const blossomVolume=document.getElementById("blossomVolume");
 const forestVolume =document.getElementById("forestVolume");
+const enchantSound =new Audio("enchant.mp3");
+enchantSound.volume =0.5;
 const W=860;
 const H=440;
 canvas.width= W;
@@ -119,13 +121,24 @@ particles=particles.filter(p=> p.y<H+20 && p.x>-20 && p.x<W+20);
 }
 function drawParticles(){
     for (const p of particles) { if (p.type==='rain'){
+        if(p.enchant){
+            ctx.save(); ctx.shadowColor=p.color; ctx.shadowBlur= 6;
+            ctx.strokeStyle =p.color; ctx.lineWidth =1.8; 
+            ctx.globalAlpha = p.alpha; 
+            ctx.beginPath(); ctx.moveTo(
+                p.x,p.y
+            ) ;ctx.lineTo(p.x+ p.vx *3, p.y+ p.len); 
+       ctx.stroke(); 
+    ctx.restore(); } else{
+
+    
         ctx.strokeStyle='rgba(200,220,235,'+p.alpha+')';
         ctx.lineWidth= 1.2;
         ctx.beginPath();
 ctx.beginPath(); ctx.moveTo(p.x,p.y) ;
 ctx.lineTo(p.x+p.vx* 3,p.y+p.len);
 ctx.stroke();
-    }
+    }}
 else {
     ctx.save();
     ctx.translate(p.x,p.y);
@@ -188,19 +201,20 @@ const buffCosts ={
 //one more blessing is what i guess goin to get added next update
 let  buffs={rain:{until:0},
 sun:{until:0}, sakura :{until:0}};
-function buffActive(id){return
-    Date.now()< buffs[id],until;
+function buffActive(id){return Date.now() < buffs[id].until;
 
 } function activateBuff(id){
+    enchantSound.currentTime=0; 
+    enchantSound.play().catch(() => {} );
 const cost =buffCosts[id];
 
 if  (!cost ||buffActive(id)) 
-    return ; if  (wallet.leaves >=cost.leaves && wallet.flowers>=cost.flowers){
+    return ; if(wallet.leaves >=cost.leaves && wallet.flowers>=cost.flowers){
 
 wallet.leaves-= cost.leaves; wallet.flowers -=cost.flowers; buffs[id].until=Date.now()+BUFF_DURATION;
 saveWallet(); renderShop(); spawnBuffBurst(id); 
 flashCard(id);
-} function spawnBuffBurst(id){
+}} function spawnBuffBurst(id){
     const color=  id==='rain' ? '#9fd3ff': id==='sun' ?
     '#ffd166' :'#ffb3cf'; for(let i= 0; i<14; 
         i++){sparkles.push({
@@ -209,8 +223,8 @@ flashCard(id);
 
 
 
-        });} function flashCard(id){
-            const timerEl=document.querySelector('.bufftimer[data-timer=" '+id+' "]');
+        });}} function flashCard(id){
+            const timerEl=document.querySelector(`.bufftimer[data-timer="${id} "]`);
             if(!timerEl) return;
             const card=timerEl.closest('.bi'); 
             card.classList.remove('justActivated');
@@ -238,12 +252,12 @@ document.querySelectorAll('.bufftimer').forEach (bar=>{
     const active=buffActive(id); bar.classList.toggle('active' ,active) ; if(active){
         const remaining =buffs[id].until-Date.now(); 
         const pct =clamp(remaining/BUFF_DURATION,0,1)*100; bar.innerHTML=
-        '<div class="bufftimer-fill"style=:width:'+pct+'%"></div>';
+        `<div class="bufftimer-fill"style="width:${pct}%"></div>`;//i hd lil confusion as i hdnot used inner html from long time
     }
 });
 
-}       }
-}
+}       
+
 
 let unlocked={sunflower:false, dandelion: false, 
      blossomtree:false
@@ -339,7 +353,50 @@ function drawSpecialPlants(){
             if(unlocked.blossomtree) drawBlossomTree(W-130,H-18);
 }
 
+const enchantColors =['#9fd3ff', '#ffd166','#ff9fc4','#c9a0ff','#8fffc4'];
+function spawnBuffRain(){
+    if(!buffActive('rain')) 
+        return; if(Math.random()<0.6){
+    const isEnchant= Math.random() <0.15; particles.push({
+    type:'rain',
+    x:rnd(0,W),y:-10, 
+    vx :-0.6,
+    vy:rnd(8,16), len:rnd(8,16), 
+    alpha :isEnchant? 0.9 :.5, enchant:isEnchant,
+    color:isEnchant ? pick(enchantColors) :
+    null
+    });}
+}
 
+
+
+function drawBuffSun(){
+    if(!buffActive('sun')) 
+        return;
+    const cx=90 
+    ,cy=75,r= 32; 
+     ctx.save();
+
+    ctx.strokeStyle ='rgba(255,203, 97,0.8)'
+    ;ctx.lineWidth =3; 
+    ctx.lineCap ='round';
+    const rayCount=10;
+    const t=Date.now() /1000; for(let i=0;i<rayCount; i++){
+        const angle= (i/rayCount)* Math.PI*2
+        + t* 0.15; const rayLen  =10+Math.sin(t*2 +i)* 3;
+        ctx.beginPath(); ctx.moveTo(cx +Math.cos(angle) *(r+4),cy +Math.sin(angle) *(r+4)); ctx.lineTo(
+            cx
+            +Math.cos(angle) *(r+4+rayLen), cy +Math.sin(angle) *(r+4+rayLen));
+ctx.stroke();
+    }
+    ctx.fillStyle ='#ffcb61';
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2) ;
+    ctx.fill();
+    ctx.strokeStyle ='#e08a1f66';
+    ctx.lineWidth =2;
+ctx.beginPath(); 
+ctx.arc(cx,cy,r-4, 0,Math.PI*2); ctx.stroke(); ctx.restore();
+}
 
 let boost=0;
 let boostLastTick= Date.now();
@@ -427,7 +484,7 @@ function clamp( v,a,b ){
         const baseY=H-28;
         const angle=-Math.PI/ 2 +rnd(-0.08,0.08);
         const startThick= buffActive('sun') ? 8: 5;
-        this.root=new Segment(this.x, baseY,angle, rnd(28,38), 5, startThick, 
+        this.root=new Segment(this.x, baseY,angle, rnd(28,38), startThick, 
     this.stemColor,0);
     this.tips=[this.root];
     totalStems++;
@@ -465,7 +522,7 @@ if (isSpace|| (tip.depth>2 && Math.random() <0.4)
                 if (sakuraBoost){
                     for (let i=0;i<3; i++){
                         particles.push({type:'petal', x:tip.ex,y:tip.ey,vx:rnd(-0.5,0.5),vy:rnd(0.5,1.2), 
-                            rot:rnd(Math.PI* 2),spin :rnd(-0.04,0.04),
+                            rot:rnd(0,Math.PI* 2),spin :rnd(-0.04,0.04),
                             size:rnd(6,10),color:pick(PALETTE.flowers)
                         });
 
@@ -658,6 +715,7 @@ function render() {
     ctx.clearRect(0,0,W,H);
     drawBackground();
     drawSpecialPlants();
+    drawBuffSun();
     drawBoostMeter() ;
     drawStars();
     for (const plant of plants ) {
@@ -786,6 +844,7 @@ function loop(){  // as my alch theme was endless so this was neccesary
  updateSky();
  updateAudioFade();
  spawnParticle();
+ spawnBuffRain();
  updateParticles();
  applyDecay();
  render();   
