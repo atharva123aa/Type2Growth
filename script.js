@@ -164,7 +164,7 @@ function updateSparkles(){
 }
 function drawSparkles(){ for(const s of sparkles){
     ctx.save(); ctx.globalAlpha =Math.max(0,s.life);  
-ctx.fillStyle='#fff3b0';  ctx.beginPath();
+ctx.fillStyle=s.color||'#fff3b0' ; ctx.beginPath();
 ctx.arc (s.x,s.y,s.size,0,Math.PI*2)// NOW I M GOOD IN ARCS
 ctx.fill(); ctx.restore();
 } 
@@ -199,9 +199,52 @@ if  (!cost ||buffActive(id))
 
 wallet.leaves-= cost.leaves; wallet.flowers -=cost.flowers; buffs[id].until=Date.now()+BUFF_DURATION;
 saveWallet(); renderShop(); spawnBuffBurst(id); 
-flashCard(id);//todo work on flash card and buffburst in other commit 
+flashCard(id);
+} function spawnBuffBurst(id){
+    const color=  id==='rain' ? '#9fd3ff': id==='sun' ?
+    '#ffd166' :'#ffb3cf'; for(let i= 0; i<14; 
+        i++){sparkles.push({
+            x:W/2+rnd(-60,60), y:H*0.4 +rnd(-30,30), vx:rnd(-1.5,1.5),vy:rnd(-2,-0.6), life:1, 
+            size:rnd(2,4), color:color
+
+
+
+        });} function flashCard(id){
+            const timerEl=document.querySelector('.bufftimer[data-timer=" '+id+' "]');
+            if(!timerEl) return;
+            const card=timerEl.closest('.bi'); 
+            card.classList.remove('justActivated');
+            void card.offsetWidth;
+            card.classList.add('justActivated'
+            );
+        }
+
+function renderBuffs(){
+    document.querySelectorAll('.buffbtn').forEach(btn=>{
+        const id=btn.dataset.id; 
+        const active=buffActive(id); const cost =buffCosts[id];
+        const canAfford= wallet.leaves>= cost.leaves&& wallet.flowers >=cost.flowers; 
+        btn.disabled=active||!canAfford ; 
+        btn.classList.toggle('live', active ); 
+    const card=btn.closest('.bi')
+    if(card)card.classList.toggle ('live-glow',active );
+    if(active && !btn.dataset.origLabel){
+        btn.dataset.origLabel =btn.textContent;
+    } btn.textContent=active ?'active' :(btn.dataset.origLabel ||btn.textContent);}
+    );
+
+document.querySelectorAll('.bufftimer').forEach (bar=>{
+    const id=bar.dataset.timer;
+    const active=buffActive(id); bar.classList.toggle('active' ,active) ; if(active){
+        const remaining =buffs[id].until-Date.now(); 
+        const pct =clamp(remaining/BUFF_DURATION,0,1)*100; bar.innerHTML=
+        '<div class="bufftimer-fill"style=:width:'+pct+'%"></div>';
+    }
+});
+
+}       }
 }
-}
+
 let unlocked={sunflower:false, dandelion: false, 
      blossomtree:false
 }; 
@@ -325,6 +368,7 @@ let totalLeaves=0;
 let  totalFlowers=0;
 let lastTypedAt=Date.now();
 function applyDecay() {
+    if (buffActive('sun')) return;
     const idleMs= Date.now()- lastTypedAt; if(idleMs <15000 ) return;
     const decayAmount= 0.00025;
     for(const plant of plants){
@@ -382,7 +426,8 @@ function clamp( v,a,b ){
     init(){
         const baseY=H-28;
         const angle=-Math.PI/ 2 +rnd(-0.08,0.08);
-        this.root=new Segment(this.x, baseY,angle, rnd(28,38), 5, 
+        const startThick= buffActive('sun') ? 8: 5;
+        this.root=new Segment(this.x, baseY,angle, rnd(28,38), 5, startThick, 
     this.stemColor,0);
     this.tips=[this.root];
     totalStems++;
@@ -406,26 +451,40 @@ if (ch==='.'){this.dropLeaf(); return; }
 if (isSpace|| (tip.depth>2 && Math.random() <0.4)
 ) {this.branch(tip);} else if (isVowel &&  Math.random() <0.7) {
     if (!tip.flower) {
+        const sakuraBoost= buffActive('sakura') ;
         tip.flower={
             x:tip.ex,
             y:tip.ey,
-            r: clamp(4 +freq*0.7, 5, 14),color:this.flowerColor,
+            r: clamp((4 +freq*0.7)*(sakuraBoost?1.6:1),5,sakuraBoost?24:14),color:this.flowerColor,
             center:this.flowerCenter, 
-            petals:5+ Math.floor(freq/ 2), rot:Math.random()* Math.PI}; 
+            petals:5+ Math.floor(freq/ 2)+(sakuraBoost?4:0),rot:Math.random()* Math.PI}; 
                 totalFlowers++;
                 wallet.flowers++; 
                 saveWallet();
                 this.flowers.push(tip.flower);
+                if (sakuraBoost){
+                    for (let i=0;i<3; i++){
+                        particles.push({type:'petal', x:tip.ex,y:tip.ey,vx:rnd(-0.5,0.5),vy:rnd(0.5,1.2), 
+                            rot:rnd(Math.PI* 2),spin :rnd(-0.04,0.04),
+                            size:rnd(6,10),color:pick(PALETTE.flowers)
+                        });
+
+                    }
+                }
         }
     } else{ this.extend(tip,speed,freq);
-} if (Math.random()> 0.5) this.addLeaf(tip);
+}
+const leafChance =buffActive('rain') ? 0.8:0.5;
+ if (Math.random()> (1 -leafChance)) this.addLeaf(tip);
 
 }extend(tip,speed,freq) {
     const wbl=rnd(-0.18, 0.18);
     const NewAngle=tip.angle+ wbl;
+    const rainMult =buffActive('rain') ? 1.6:1;
     const bLen=clamp(20+ speed*0.4 +freq *1.6,14,49);
     const len= rnd(bLen*0.8,bLen*1.2);
-    const thick=Math.max(1,tip.thick -0.6 );
+    const sunThinning=buffActive('sun') ?0.15 :0.6;
+    const thick=Math.max(1,tip.thick- sunThinning);
     const child=new Segment(tip.ex, tip.ey,NewAngle,len,thick,this.stemColor, tip.depth +1); tip.children.push(child);
     const idx= this.tips.indexOf(tip);
     if(idx !== -1) 
@@ -685,6 +744,7 @@ document.addEventListener("pointerdown",startMusic, {once:true});
 document.addEventListener("keydown",startMusic ,{once:true});
 document.querySelectorAll('.buybtn').forEach(btn=>{btn.addEventListener('click',()=>buyItem(btn.dataset.id));});
 renderShop();
+document.querySelectorAll('.buffbtn').forEach( btn=>{btn.addEventListener('click',()=>activateBuff(btn.dataset.id));}); renderBuffs();
 const spanelEl=document.getElementById('spanel');
 const sToggleBtn=document.getElementById('sToggle');
 function setsCollapsed(collapsed){
@@ -731,6 +791,7 @@ function loop(){  // as my alch theme was endless so this was neccesary
  render();   
  trySpawnSpecialEffect();
  updateSparkles();
+ renderBuffs();
  requestAnimationFrame(loop);
  
 } requestAnimationFrame(loop);
