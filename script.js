@@ -397,6 +397,33 @@ ctx.stroke();
 ctx.beginPath(); 
 ctx.arc(cx,cy,r-4, 0,Math.PI*2); ctx.stroke(); ctx.restore();
 }
+let typingSpeedWPM= 0; 
+let charTimestamps=[]; 
+function rkfs(){
+    const now=Date.now();
+    charTimestamps.push(now) ;
+    charTimestamps =charTimestamps.filter(t=>
+        now-t<3000);}
+ 
+    function updateSpeedometer(){
+    const now=Date.now();
+    charTimestamps=charTimestamps.filter(t=> now-t < 3000);
+         if(charTimestamps.length<2){
+            typingSpeedWPM =Math.max(0, typingSpeedWPM-1);
+            return;
+        } else{
+            
+        
+const span =(charTimestamps[charTimestamps.length-1]-charTimestamps[0])/ 1000; 
+const charsPerSec= span>0? charTimestamps.length/span: 0;
+const TargetWPM= (charsPerSec *60)/5 ;
+typingSpeedWPM += ( TargetWPM -typingSpeedWPM
+)* 0.15;
+}
+document.getElementById('wpm').textContent = Math.round(typingSpeedWPM);
+
+
+    }
 
 let boost=0;
 let boostLastTick= Date.now();
@@ -725,6 +752,7 @@ drawParticles(); drawSparkles();
     let pLen =0;
     typebox.addEventListener('input', () => {
         lastTypedAt=Date.now();
+        rkfs();
         const val=typebox.value;
         const now=Date.now();
         const dt=now -lastTime;
@@ -846,6 +874,7 @@ function loop(){  // as my alch theme was endless so this was neccesary
  spawnParticle();
  spawnBuffRain();
  updateParticles();
+ updateSpeedometer();
  applyDecay();
  render();   
  trySpawnSpecialEffect();
