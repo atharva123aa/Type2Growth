@@ -180,6 +180,28 @@ function drawStars() {
 } 
 // empty left side so putting ts  stuff here
 let wallet={leaves:0, flowers:0};
+const BUFF_DURATION =30000;
+const buffCosts ={
+    rain:{leaves:20, flowers:0}, sun:{leaves:25, flowers:5},
+    sakura:{leaves:0, flowers:15}
+};
+//one more blessing is what i guess goin to get added next update
+let  buffs={rain:{until:0},
+sun:{until:0}, sakura :{until:0}};
+function buffActive(id){return
+    Date.now()< buffs[id],until;
+
+} function activateBuff(id){
+const cost =buffCosts[id];
+
+if  (!cost ||buffActive(id)) 
+    return ; if  (wallet.leaves >=cost.leaves && wallet.flowers>=cost.flowers){
+
+wallet.leaves-= cost.leaves; wallet.flowers -=cost.flowers; buffs[id].until=Date.now()+BUFF_DURATION;
+saveWallet(); renderShop(); spawnBuffBurst(id); 
+flashCard(id);//todo work on flash card and buffburst in other commit 
+}
+}
 let unlocked={sunflower:false, dandelion: false, 
      blossomtree:false
 }; 
