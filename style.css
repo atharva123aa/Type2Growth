@@ -24,7 +24,7 @@
 body{
     background:var(--bg); font-family: Helvetica, sans-serif; min-height:99vh; display:flex;
     justify-content:center; align-items:flex-start; gap:23px; flex-wrap:wrap; padding:0 17px ;transition:  background  0.4s ease;
-}#wrap{display:flex; flex-direction:column; align-items: center; width:100%;
+}#wrap{ order:1;display:flex; flex-direction:column; align-items: center; width:100%;
  max-width:896px; min-height:100vh; padding:0 20px;} #header{position:relative; 
 width:100%;text-align: center; padding:2.5rem 0 1.6rem;} #header h1{font-size:22px;
 font-weight:396;
@@ -104,7 +104,7 @@ margin-bottom:14px;
 font-size:14px;
  }
 
- /*2 40*/#spanel{
+ /*2 40*/#spanel{order :2;
     position: sticky ; align-self:flex-start;
    top:111px; width:221px ;
    flex-shrink:0;
@@ -150,8 +150,8 @@ cursor:pointer; transition: background 0.2s, border-color 0.4s;
  } #spanel.collapsed #sToggle{
     position: static;
  color :rgba(255,255,255,0.85);} 
- #buffpanel{
-    position :stciky;  align-self: flex-start;
+ #buffpanel{order:0;
+    position :sticky;  align-self: flex-start;
  top:111px; 
     width:237px;  flex-shrink:0;background:linear-gradient(161deg,rgba(20,15,25,0.7),rgba(10,8,15,0.75)); 
  color:#fff; border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:18px;
@@ -250,3 +250,16 @@ font-size:9px;}
 
 #buffpanel{
 width:100%; max-width: 420px; margin:0 auto;  top:auto;}}
+
+/*new feature  for js sync for the property cubic beizer i used ai as placeholder method not work
+*/
+.bi.justActivated::before{ content:'' ; position:absolute ; 
+    inset:-8px; border-radius:17px; background: radial-gradient(circle,rgba(255,255,255,0.5), transparent 72%); animation: buffFlash 0.7s cubic-bezier(.2,.8,.3,1) forwards; pointer-events: none;
+    z-index :2;
+
+} @keyframes buffFlash{
+    from{opacity:1; transform :scale(0.85);} to{
+        opacity:0; 
+        transform:scale(1.3);
+    }
+}
