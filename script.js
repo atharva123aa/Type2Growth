@@ -522,6 +522,7 @@ function clamp( v,a,b ){
 // todo in my final touch make it look more real
     } 
 grow(ch,speed ){if (!this.tips.length) return;
+    this.tryRipenFruit();
     this.LetterFreq[ch]=(this.LetterFreq[ch] ||0)+1;
 const isVowel=VOWELS.has(ch.toLowerCase());
 const isSpace=ch ===' ';
@@ -612,7 +613,20 @@ addLeaf(seg){ //time to take claude help a bit its
 seg.leaves.push({x:bx,y:by,angle: lAngle, len:lLen, 
     color:this.leafColor});totalLeaves ++;
 wallet.leaves++; saveWallet();
-} 
+} tryRipenFruit(){
+    for(const f of this.flowers) {if (f.fruit) 
+        continue; 
+    f.age =(f.age ||0) +1;
+    if (f.age >25&& Math.random()< 0.02){
+    f.fruit ={
+        type :pick(['apple','berry','orange']),
+        r :rnd(6,9),
+        sway :rnd(0,Math.PI*2)
+    };
+    
+    }
+    }
+}
 burst() {
     if (!this.flowers.length) return;
     const f=pick(this.flowers)
@@ -679,8 +693,11 @@ ctx.beginPath();
         ctx.save();
         ctx.translate(f.x,f.y)
         ctx.globalAlpha =1-wilt*0.7;        for (let i=0;i<f.petals; i++){ctx.save();
-
+if(f.fruit){this.drawFruit(f); ctx.restore (); return;}
 //some feature to be added here
+for( let  i=0; i<f.petals; 
+    
+    i++){ctx.save();
             ctx.rotate(f.rot + (i/f.petals)*Math.PI* 2);
             ctx.fillStyle=f.color;
             ctx.globalAlpha= 0.9; ctx.beginPath();
@@ -696,7 +713,53 @@ ctx.beginPath();
         ctx.arc(0, 0 ,f.r*0.38,0 ,Math.PI *2);
         ctx.fill(); ctx.restore();
     }
+    drawFruit(f){
+        const sway= Math.sin( Date.now()/ 700 +f.fruit.sway)* 2;
+        const r =f.fruit.r; ctx.save();
+    ctx.translate(sway, 3);
+    if(f.fruit.type ==='apple') {
+        ctx.fillStyle ='#e0483f' ;
+        ctx.beginPath (); 
+        ctx.arc(0,0,r,0,Math.PI*2 ); ctx.fill();
+        ctx.strokeStyle ='#6e4f45' ; 
+        ctx.lineWidth =1.5;
+
+        ctx.beginPath();
+        ctx.moveTo(0, -r);ctx.lineTo(0,-r-4); 
+        ctx.stroke(); 
+        ctx.fillStyle ='rgba(255,255,255,0.35)' ;
+        ctx.beginPath(); 
+        ctx.ellipse(-r *0.3,-r*0.3,r*0.25, r*0.15 ,0, 0 ,Math.PI*2) ;
+        ctx.fill();
+
+    }else if (f.fruit.type ==='berry'){
+        ctx.fillStyle ='#5a3d7b';
+        for (let i =0; i<3;i++){
+const bx=Math.cos((i/3) *Math.PI* 2) *r*0.4; const by=
+Math.sin((i/3)*Math.PI*2)*r* 0.4;
+ctx.beginPath (); 
+ctx.arc(bx,by,r*0.5 ,0, Math.PI* 2);
+ctx.fill();
+        }
+else // tod-will add lemon for lemongggggggggg too
+{
+    ctx.fillStyle ='#ffa798'; 
+    ctx.beginPath(); 
+    ctx.arc(0,0,r,Math.PI*2); 
+    ctx.fill(); 
+   ctx.strokeStyle ='rgba(0,0,0,.15)' ;
+   ctx.lineWidth= 0.81;
+   for (let i=0; i<5; i++){ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.lineTo(Math.cos((i/5)*Math.PI*2)*r, 
+Math.sin((i/5)*Math.PI*2)*r)
+   }
 }
+ctx.restore();
+    }
+    
+
+
 function shiftPlant(seg,dx){
     seg.x+= dx;
     seg.ex+= dx;
