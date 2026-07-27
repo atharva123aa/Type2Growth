@@ -32,6 +32,13 @@ flowers:[
 const rain=new Audio("r.mp3")
 const blossom=new Audio("s.mp3")
 const forest=new Audio("f.mp3")
+const cSongInput=document.getElementById("cSong");
+const playcBtn=document.getElementById("playcBtn")
+const cVolume=document.getElementById("cVolume")
+const cAudio=new Audio(); 
+let cSongName ="";
+cAudio.loop=true;
+cAudio.volume =0.7;
 rain.loop=true;
 blossom.loop=true;
 forest.loop= true;
@@ -623,7 +630,8 @@ wallet.leaves++; saveWallet();
         r :rnd(6,9),
         sway :rnd(0,Math.PI*2)
     };
-    
+    wallet.flowers+=2; //fruit should be a reward for flower too ig
+    saveWallet();
     }
     }
 }
@@ -692,12 +700,15 @@ ctx.beginPath();
         const wilt=f.wilt || 0;
         ctx.save();
         ctx.translate(f.x,f.y)
-        ctx.globalAlpha =1-wilt*0.7;        for (let i=0;i<f.petals; i++){ctx.save();
-if(f.fruit){this.drawFruit(f); ctx.restore (); return;}
-//some feature to be added here
-for( let  i=0; i<f.petals; 
-    
-    i++){ctx.save();
+        ctx.globalAlpha =1-wilt*0.7;
+
+        if(f.fruit){
+            this.drawFruit(f);
+            ctx.restore();
+            return;
+        }
+
+        for( let i=0; i<f.petals; i++){ctx.save();
             ctx.rotate(f.rot + (i/f.petals)*Math.PI* 2);
             ctx.fillStyle=f.color;
             ctx.globalAlpha= 0.9; ctx.beginPath();
@@ -706,7 +717,6 @@ for( let  i=0; i<f.petals;
                 ctx.fill();
                 ctx.globalAlpha= 1;
                 ctx.restore();
-            
         } 
         ctx.fillStyle= f.center;
         ctx.beginPath();
@@ -741,23 +751,23 @@ ctx.beginPath ();
 ctx.arc(bx,by,r*0.5 ,0, Math.PI* 2);
 ctx.fill();
         }
-else // tod-will add lemon for lemongggggggggg too
-{
+    }else{ // todo-will add lemon for lemongggggggggg too
     ctx.fillStyle ='#ffa798'; 
     ctx.beginPath(); 
-    ctx.arc(0,0,r,Math.PI*2); 
+    ctx.arc(0,0,r,0,Math.PI*2); 
     ctx.fill(); 
    ctx.strokeStyle ='rgba(0,0,0,.15)' ;
    ctx.lineWidth= 0.81;
-   for (let i=0; i<5; i++){ctx.beginPath();
+   for (let i=0; i<5; i++){
+    ctx.beginPath();
     ctx.moveTo(0,0);
-    ctx.lineTo(Math.cos((i/5)*Math.PI*2)*r, 
-Math.sin((i/5)*Math.PI*2)*r)
+    ctx.lineTo(Math.cos((i/5)*Math.PI*2)*r, Math.sin((i/5)*Math.PI*2)*r);
+    ctx.stroke();
    }
 }
 ctx.restore();
     }
-    
+}
 
 
 function shiftPlant(seg,dx){
@@ -855,8 +865,10 @@ clearbtn.addEventListener('click',() => {
     ctx.clearRect(0,0,W,H);
     drawBackground();
     updateStats();
-
-}) 
+    cAudio.pause();// the audio should pass too or it will look like bug ig
+cAudio.currentTime =0;
+playcBtn.textContent = "play custom song"
+}) ;
 soundbtn.addEventListener("click",() => {
     soundmenu.classList.toggle("hidden");
 
@@ -867,6 +879,21 @@ const  link=document.createElement("a");
 link.download="my-typegarden"+Date.now()+".png";
 link.href=canvas.toDataURL("image/png"); link.click();
 
+});
+let customSongName= "play song";
+playcBtn.addEventListener("click",()=>{
+    if(!cAudio.src){alert("choose a song first!"); return;} //the js feature are pretty more workful than that of python like they just need their word like alert  but in python you have to create a script:{
+            
+    
+    if (cAudio.paused){
+        cAudio.play(); 
+        playcBtn.textContent ="pause";
+
+
+    } else{
+        cAudio.pause();
+        playcBtn.textContent ="play ";
+    }
 });
 rainVolume.addEventListener("input",() => {
     rain.volume=rainVolume.value;
@@ -879,7 +906,18 @@ blossomVolume.addEventListener("input",() =>{
 forestVolume.addEventListener("input",()  =>{
     forest.volume=forestVolume.value;
 });
+cVolume.addEventListener("input",()=>
+{cAudio.volume =cVolume.value;});
+cSongInput.addEventListener("change", ()=> {
+    const file =cSongInput.files[0];
+    if(!file) return; 
+cAudio.src =URL.createObjectURL(file);
+ playcBtn.textContent ="Play " +file.name;
+cSongName =file.name;
+ playcBtn.textContent ="Play " +file.name;
+cSongName =file.name;
 
+});
 let musicStarted=false;
 function startMusic(){
 
@@ -929,6 +967,7 @@ drawBackground();
 const saved=localStorage.getItem("gardenText");
 if (saved)
 {typebox.value= saved;
+    lastTime =Date.now();
     typebox.dispatchEvent(new Event("input"));
 }
 typebox.focus();
