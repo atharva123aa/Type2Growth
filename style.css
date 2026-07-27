@@ -22,9 +22,10 @@
  --accent:#ff6fa5; 
 --btn-hover-bg :#ffd9e9; --btn-hover-text: #c2427a;}
 body{
-    background:var(--bg); font-family: Helvetica, sans-serif; min-height:99vh; display:flex;
-    justify-content:center; align-items:flex-start; gap:23px; flex-wrap:wrap; padding:0 17px ;transition:  background  0.4s ease;
-}#wrap{ order:1;display:flex; flex-direction:column; align-items: center; width:100%;
+    background:var(--bg); font-family: Helvetica, sans-serif; min-height:99vh; display: grid; grid-template-columns: 238px minmax(700px, 896px) 
+    221px;
+    justify-content:center; align-items:flex-start; gap:23px;  padding:20px 17px ;transition:  background  0.4s ease;
+}#wrap{ grid-column: 2;display:flex; flex-direction:column; align-items: center; width:100%;
  max-width:896px; min-height:100vh; padding:0 20px;} #header{position:relative; 
 width:100%;text-align: center; padding:2.5rem 0 1.6rem;} #header h1{font-size:22px;
 font-weight:396;
@@ -94,7 +95,7 @@ padding:16px; box-shadow:0 8px 20px rgba(201,79,124,0.16) ; z-index:9; text-alig
 
 
  }
- #hidden{display:none;}.sounditem{
+ .hidden{display:none;}.sounditem{
     display:flex; flex-direction :column;
 margin-bottom:14px; 
  }
@@ -104,7 +105,7 @@ margin-bottom:14px;
 font-size:14px;
  }
 
- /*2 40*/#spanel{order :2;
+ /*2 40*/#spanel{grid-column:3;
     position: sticky ; align-self:flex-start;
    top:111px; width:221px ;
    flex-shrink:0;
@@ -145,12 +146,12 @@ cursor:pointer; transition: background 0.2s, border-color 0.4s;
  /* i thought i shuld put some effort on small feature too as it shows dedication(reviewer where are you!)*/
  #spanel.collapsed{
     width:auto; padding:10px   14px ; cursor: pointer;
- } #spanel.collapsed h3, #spanel.collapsed hr,#spanel.collapsed .shopstat, #spanel.collapsed .shopitem{
+ } #spanel.collapsed h3, #spanel.collapsed hr,#spanel.collapsed .sstat, #spanel.collapsed .sitem{
     display: none;
  } #spanel.collapsed #sToggle{
     position: static;
  color :rgba(255,255,255,0.85);} 
- #buffpanel{order:0;
+ #buffpanel{grid-column :1;
     position :sticky;  align-self: flex-start;
  top:111px; 
     width:237px;  flex-shrink:0;background:linear-gradient(161deg,rgba(20,15,25,0.7),rgba(10,8,15,0.75)); 
@@ -270,11 +271,13 @@ width:100%; max-width: 420px; margin:0 auto;  top:auto;}}
 body{
     display:flex; flex-direction:  column;
     align-items :center; 
-gap:20px; 
+gap:20px;  padding
+:17px;
 }
-#buffpanel #spanel {
+#buffpanel,#wrap,
+ #spanel {
     position:static; width:100%; 
-    max-width:496px; 
+    max-width:896px; 
 }
 }
 
@@ -282,7 +285,7 @@ gap:20px;
 @media( max-width:597px ){
     body{padding :0 9px;}
      #header {padding:1.2rem 0 1rem;}
-} #themeSwitch{
+ #themeSwitch{
     position:static; 
     justify-content: center; margin-bottom :10px; 
 } #sbtn{
@@ -317,8 +320,21 @@ aspect-ratio: 860/ 440;
     padding: 13px;
 } .sitem, .bi{
 display: flex; flex-direction: column; gap: 4px;
-} #themeSwitch{flex-wrap:wrap; }
+}  }
 /*nokia ahh phones*/
 @media(max-width: 380px){
     #header h1{font-size :18px;} .stat{font-size :9.6px;} #stats{gap :8px;}
+} #cSong{width: 100%; 
+margin-top:8px ;
+color:var(--text-sub);
+font-family: courier;}#playcBtn{
+    display:block ;
+    width:100% ;
+    margin :8px 0; padding:7px 12px ;
+    background: var(--panel-bg); color:var(--text-main); border:1px solid var(--panel-border);
+    border-radius: 9px; cursor:pointer; font-family:courier ; 
+    transition: background .2s, color .2s, border-color .2s;
+} #playcBtn:hover {background: var(--btn-hover-bg); 
+color:var(--btn-hover-text);}#cVolume{
+    width:100%; margin-top:7px;
 }
