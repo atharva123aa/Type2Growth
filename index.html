@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
-<html><head>
+
+<html><head><meta charset="utf-8">
     <title>Type4Growth</title><link rel="stylesheet" href="style.css"><script src="script.js" defer></script>
 
 </head>
@@ -18,10 +18,17 @@
         <div class="sounditem">
             <label>Blossom</label>
             <input type="range" id="blossomVolume" min="0" max="1" 
-            step="0.01" value="0" >
-        </div><div class="sounditem"><label>Forest</label>
+            step="0.01" value="0.4" >
+        </div><div class="sounditem">
+            <label>Forest</label>
         <input type="range" id= "forestVolume" min="0"
-    max="1" step="0.01" value="0.4"></div></div>
+    max="1" step="0.01" value="0.4"></div><div class="sounditem">
+            
+            <label>Custom sounds!!!</label>
+
+    <input type ="file" id="cSong" accept="audio/*"><button id="playcBtn">Play</button><input type="range" id="cVolume" min="0" max ="1" 
+    step="0.011" value ="0.5"></div></div>
+    
     <h1>Type4Growth</h1><p>Every type helps the plant grow.Feel free to type and if you wanna change shape just refresh </p>
     </div>
     <div id ="stats">
