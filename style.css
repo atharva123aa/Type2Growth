@@ -365,4 +365,32 @@ margin-top:6px
 background:var(--panel-border);}
 .ls-bar-fill{height:100%; width: 0%; background: var(--accent);
 transition:width 0.25s
-ease ;}
+ease ;}#mapBtn{position: absolute;
+top :0.4rem ; right :6.3rem ; font-size: 12px; 
+font-family:Courier; color :var(--text-sub);border:1px solid var(--panel-border); border-radius: 19px;
+padding: 6px 14px; 
+cursor:pointer; background:var(--panel-bg); transition: background 0.2s ,color 0.2s ;}
+#mapBtn:hover{background:var(--btn-hover-bg); color:var(--btn-hover-text);} #mapMenu{
+    position: absolute;; top: 2.6rem; right:6.3rem ; 
+    width:272px ; display: flex; 
+    gap:10px;
+    background: var(--panel-bg); border :1px solid  var(--panel-border);  border-radius :12px ;
+padding:14px; box-shadow :0 8px 20px rgba(0,0,0,0.16); z-index: 9;
+}
+.mapcard{flex:1; text-align: center ;
+cursor :pointer; font-size:10px; 
+font-family:courier ; color:var(--text-sub);}.mapcard.locked{cursor:not-allowed ; opacity:0.57 ;}.mapthumb{
+    width:100% ; height:52px; border-radius: 8px; margin-bottom:5px; border:2.0001px solid transparent; transition: border-color .2s; 
+} .mapcard:not(.locked):hover .mapthumb{border-color: var(--accent);}.mapcard.active .mapthumb{border-color: var(--accent);
+box-shadow :0 0 0 2px var(--accent);}
+/* worse in linear pattern i will need to get gpt help for color patterns sorry!*/
+.thumb-classic{background :linear-gradient(180deg,#dff4ff,#fef8fb,#ffeef6);}
+.thumb-graveyard{ background:linear-gradient(180deg,#1a0f26,#2e1a3d,#4a2560);} .thumb-samurai{background: linear-gradient(  180deg ,#3a0a0a, #6b1414, #9e1f1f);}
+
+
+@media(max-width:599px){
+#mapBtn{position:static; display :block ; margin:0 auto 
+10px;}#mapMenu{position:static ;
+width:100%;  max-width:284px ; margin:0 auto 8px;}
+}
+
