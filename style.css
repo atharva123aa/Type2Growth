@@ -1,4 +1,343 @@
-#loadscreen {
+* {box-sizing: border-box; margin:0; padding:0;}
+:root{
+    --bg: #fff4f8;
+    --panel-bg :#fff7fb; --panel-border:#efbfd2;
+    --text-main :#c94f7c; --text-sub:#b67a93; --text-input:#8d4d67; 
+    --accent:#e75480;
+  --btn-hover-bg:#ffe3ee;
+  --btn-hover-text :#d63384;  
+
+}
+/*not sure that it will look cool  */
+[data-theme="forest"]{
+    --bg:#eef5ea ; --panel-bg:#f4f9f0;
+    --panel-border:#a9c79c; --text-main:#3e6b3a; --text-sub:#6e8f63;
+    --text-input:#3f5c39; 
+    --accent :#4b7f3a; --btn-hover-bg:#dcefd2; --btn-hover-text:#2f5b2a;
+
+}
+[data-theme ="blossom" ] {--bg:#fff0f5;  --panel-bg: #fff5f9; 
+--panel-border:#f3b8d0; 
+--text-main:#c2427a; --text-sub:#c98aa8; --text-input:#96436b; 
+ --accent:#ff6fa5; 
+--btn-hover-bg :#ffd9e9; --btn-hover-text: #c2427a;}
+body{
+    background:var(--bg); font-family: Helvetica, sans-serif; min-height:99vh; display: grid; grid-template-columns: 238px minmax(700px, 896px) 
+    221px;
+    justify-content:center; align-items:flex-start; gap:23px;  padding:20px 17px ;transition:  background  0.4s ease;
+}#wrap{ grid-column: 2;display:flex; flex-direction:column; align-items: center; width:100%;
+ max-width:896px; min-height:100vh; padding:0 20px;} #header{position:relative; 
+width:100%;text-align: center; padding:2.5rem 0 1.6rem;} #header h1{font-size:22px;
+font-weight:396;
+color: var(--text-main); letter-spacing:0.04em;} #header p {font-size:13px; color: var(--text-sub);
+margin-top:8px; font-family: monospace;} #stats{
+    display:flex; flex-wrap:wrap ;
+    gap:21px; justify-content: center;; padding:0.75rem 
+    0;
+}.stat{font-size:12px; color: var(--text-sub);
+font-family:monospace; }.stat span{color:var(--accent); font-weight: bold; 
+margin-left:4px ;} #canvas{
+    width:100%;
+     max-width:860px;
+     height:440px; display: block;
+}#inputarea{width:100% ;max-width:858px; padding:1.5rem 0 2.5rem;
+ margin-top: auto;}/* todo add a visual too for this theme as it looks boring
+*/ #typebox{width:100%; background: var(--panel-bg); 
+border:1px  solid var(--panel-border); border-radius :9px; padding:11px 16px; font-size:14px; 
+color: var(--text-input);
+font-family:monospace; resize:none; 
+height:80px; outline:none; 
+ transition: border-color 0.2s;} #typebox::placeholder{color:var(--text-sub);}
+ #typebox:focus{border-color: var(--accent);} #tip{font-size:16px; color:var(--text-sub); margin-top:9px; text-align:left; 
+font-family:Courier;}
+#clearbtn{
+    display:block;
+    margin:9px auto 0;
+    font-size:13px; color: var(--text-sub); background: none ; border :1px solid  var(--panel-border) ; border-radius: 6px ;
+ padding:5px 16px; cursor:pointer; font-family:courier; transition: background 0.2s, color 0.2s;}#clearbtn:hover{background: var(--btn-hover-bg); color:var(--btn-hover-text);} #downloadbtn{
+display:block; margin:14px auto 0; font-size: 16px; color:#b04d76; background: none;;
+ border: 1px solid#efbfd2; border-radius :6px;  padding: 6px 18px ;
+ cursor: pointer; 
+ font-family:courier; transition: background 0.2s, color 0.2s;}
+ #downloadbtn:hover{background: #ffe3ee; color:#d63384;}
+ .hidden{display:none;} 
+ #sbtn{position: absolute;
+top:0.4rem; right:1rem;
+font-size:12px;
+font-family:courier; color: var(--text-sub) ; 
+border: 1px solid var(--panel-border); border-radius: 19px;; padding:6px 14px; 
+ cursor:pointer; 
+transition: background 0.2s,color 0.2s;} #sbtn:hover{
+    background:var(--panel-bg); color:var(--text-sub);
+}
+#themeSwitch{
+    position: absolute; top:0.4rem;
+    left :1rem; display:flex;
+gap:7px;}
+ 
+.themebtn {
+    font-size:11px;
+font-family:courier ; color:var(--text-sub);
+background:var(--panel-bg);  border:1px solid var(--panel-border); border-radius :14px; padding: 6px 10px; 
+cursor:pointer ; transition: background 0.2s,color 0.2s;
+} 
+.themebtn:hover{
+    background:var(--btn-hover-bg); color:var(--btn-hover-text);}.themebtn.active{ background:var(--accent);
+    color: #fff;
+  border-color:var(--accent)}
+
+ #soundmenu{position: absolute;
+    top:2.6rem;
+    right:1rem; width:262px; 
+    background: var(--panel-bg); border:1px solid var(--panel-border); 
+border-radius:12px;
+padding:16px; box-shadow:0 8px 20px rgba(201,79,124,0.16) ; z-index:9; text-align:left; /*todo improve mobile response with z indexin'*/
+
+
+ }
+ .hidden{display:none;}.sounditem{
+    display:flex; flex-direction :column;
+margin-bottom:14px; 
+ }
+ .sounditem:last-child{margin-bottom: 0;}.sounditem label { 
+    margin-bottom:6px; 
+    color:var(--text-sub);
+font-size:14px;
+ }
+
+ /*2 40*/#spanel{grid-column:3;
+    position: sticky ; align-self:flex-start;
+   top:111px; width:221px ;
+   flex-shrink:0;
+ background: rgba(0,0,0,.55); color:#fff;
+ border: 1px solid  var(--panel-border); border-radius :14px; 
+padding:16px ;font-family: monospace;
+ backdrop-filter: blur(3px); transition: border-color 0.4s ease;}/* though i dont use ai in css but for this one i used help with backdrop filter as i wanna make this cool*/  #spanel h3{
+ font-size:13px; margin-bottom:10px; font-weight:normal; 
+ letter-spacing: 0.04em; color:var(--accent);
+ } #spanel hr { border:none; 
+border-top: 1px solid rgba(255,255,255,0.2);
+  margin: 10px 0;} .sstat{
+    font-size:12px; margin-bottom: 4px; color: rgba(255,255,255,0.75);
+  } .sstat span{
+
+  
+  color:var(--accent); font-weight: bold; } .sitem{
+margin-bottom: 12px;
+  } 
+.sitem-name{
+     font-size:12px; margin-bottom:2.0001px;} .sitem-cost{ font-size:14px; color:
+    rgba(255,255,255,0.1);
+margin-bottom:6px ;} .buybtn{
+    font-size:11px; font-family:courier; background: rgba(255,255,255,0.1); color:#fff ;
+    border: 1px solid var(--panel-border); border-radius: 6px; padding: 4px 12px;
+cursor:pointer; transition: background 0.2s, border-color 0.4s;
+}
+.buybtn:hover:not(:disabled){background:var(--accent); 
+ border-color:var(--accent);} .buybtn:disabled{opacity:0.4; cursor:not-allowed;} /* credit to geeks4geek for disabled feature*/
+ @media (max-width:1111px){
+    #spanel{width:100%
+     ;max-width:420px;margin : 0 auto ; 
+     top:auto;}
+ } #sToggle{ position: absolute; top:9px; right:10px; background:none; border:none; 
+ color:rgba(255,255,255,0.6);
+ font-size:13px; 
+ cursor:pointer ; line-height: 1; padding:2px 6px;} #sToggle:hover{color:#fff;}
+ /* i thought i shuld put some effort on small feature too as it shows dedication(reviewer where are you!)*/
+ #spanel.collapsed{
+    width:auto; padding:10px   14px ; cursor: pointer;
+ } #spanel.collapsed h3, #spanel.collapsed hr,#spanel.collapsed .sstat, #spanel.collapsed .sitem{
+    display: none;
+ } #spanel.collapsed #sToggle{
+    position: static;
+ color :rgba(255,255,255,0.85);} 
+ #buffpanel{grid-column :1;
+    position :sticky;  align-self: flex-start;
+ top:111px; 
+    width:237px;  flex-shrink:0;background:linear-gradient(161deg,rgba(20,15,25,0.7),rgba(10,8,15,0.75)); 
+ color:#fff; border:1px solid rgba(255,255,255,0.15); border-radius:8px; padding:18px;
+font-family:monospace; 
+backdrop-filter: blur(11px) saturate(137%) ; 
+
+ box-shadow:0 10px 42px rgba(0,0,0,.35), inset 0  1px 0 rgba(255,255,255,0.8); transition : border-color 0.4s ease;}#buffpanel h3 {
+    font-size:13px ; margin-bottom:14px; font-weight:normal;; letter-spacing :0.08em;
+text-transform: uppercase; 
+background:linear-gradient(90deg, #ffd166, #ff6fa5, #9fd3ff); 
+-webkit-background-clip: text; background-clip:text; /*tbh i used ai to describe what i wanted and it gave me cool feature so yes first time ai usage in this css*/ color :transparent; text-align :center; }
+.bi{position: relative;
+margin-bottom: 16px;
+padding: 12px 12px 12px   14px; border-radius: 13px; 
+ border-left: 3px solid rgba(255,255,255,0.25);
+ background:rgba(255,255,255,0.04);
+ transition: background 0.3s ease, transform 0.2s ease, border-color 0.3s ease; overflow:hidden;} .bi:last-child{margin-bottom: 0;}
+ .bi:hover{background:rgba(255,255,255,0.08); transform :translateX(-2px);}
+
+ .bi-name{font-size:12.7px; margin-bottom :3px; 
+    font-weight:bold; letter-spacing:0.02em;}
+.bi-desc{ font-size: 10px; color:rgba(255,255,255,0.5); margin-bottom: 6px; line-height:1.47;}
+.bi-cost {font-size:11px;  color:rgba(255,255,255,0.7); margin-bottom:8px; display:inline-block;
+padding: 2px  8px;; border-radius: 10px; background:rgba(255,255,255,0.08);}
+.bi[data-buff="rain"]{border-left-color:#7ec8ff;} .bi[data-buff="rain"] .bi-name{color :#bfe4ff; }
+.bi[data-buff="rain"]::after{
+    content:''; 
+    position:absolute;
+    inset:0; pointer-events:none; opacity:0;background: radial-gradient(circle at 20% 0%, #7EC8FF40, transparent 54%);
+transition: opacity 0.3s;} .bi[data-buff="rain"]:hover::after{opacity:1;}
+
+.bi[data-buff="sun"]{border-left-color: #ffcb61;}
+.bi[data-buff="sun"] .bi-name{ color :#ffe3a3;}
+.bi[data-buff="sun"]::after{
+content:''; position:absolute; 
+inset: 0; pointer-events: none; opacity: 0;
+background:radial-gradient(circle at 20% 0%,#ffcb6140, transparent 61%);
+transition:opacity 0.3s; 
+
+
+}.bi[data-buff="sun"]:hover::after{
+    opacity :1;
+} .bi[data-buff="sakura"]{border-left-color :#ff9fc4;} .bi[data-buff="sakura"] .bi-name{color:#ffc9de;}
+.bi[data-buff="sakura"]::after{content:''; position:absolute; inset:0 ; pointer-events: none; opacity:0;
+background:radial-gradient( circle at 20% 0%, #FF9fc440, transparent 60%); transition:opacity 0.3S;}
+.bi[data-buff="sakura"]:HOVER::AFTER{opacity :1 ;}
+/*<s>TODO BUTTONS IN NEXT CMT </s>  and here i come comepeleting*/
+.buffbtn{ 
+position: relative; z-index:1; font-size:9px;  font-family:courier; font-weight:bold ; letter-spacing:0.03em;
+background:rgba(255,255,255,0.08); color: #fff; border:1px solid rgba(255,255,255,0.25); border-radius :21px; padding :5px 16px; cursor:pointer; transition: background  0.2s, border-color 0.3s, transform 0.15s, box-shadow 0.3s;
+} /* i get intuton that this feature will be broke asf as i dont have enough experience in doing these cool thingy*/
+.bi[data-buff="rain"] .buffbtn:hover:not(:disabled){background:#7EC8FF; BORDER-COLOR:#7EC8FF; COLOR:#08243A;
+BOX-SHADOW :0 0  16PX #7EC8FF80 ;} .bi[data-buff="sun"] .buffbtn:hover:not(:disabled){background: #ffcb61; border-color:#ffcb61; color:#3a2705; box-shadow: 0 0  16px #ffcb6180;}
+.bi[data-buff="sakura"] .buffbtn:hover:not(:disabled){ background:#ff9fc4; border-color:#ff9fc4; color: #3a0a20; box-shadow : 0 0 16px 
+#ff9fc4;  } 
+.buffbtn:active:not(:disabled){transform :scale(0.95) ;}
+.buffbtn:disabled{
+    opacity: 0.35; cursor:not-allowed;
+} 
+.bi[data-buff="rain"] .buffbtn.live{background: #7ec8ff; border-color:#7ec8ff; color :#08243a; animation:pulseRain 1.4s ease-in-out infinite;}
+.bi[data-buff="sun"] .buffbtn.live{background: #ffcb61; border-color:#ffcb61; color :#3a2705; animation:pulseSun 1.4s ease-in-out infinite;}
+.bi[data-buff="sakura"] .buffbtn.live{background: #ff9fc4; border-color:#ff9fc4; color :#3a0a20; animation:pulseSakura 1.4s ease-in-out infinite;}
+
+@keyframes pulseRain{0%,100%{box-shadow :0 0 0 0 rgba(126,200,255,0.5);}50%{box-shadow: 0 0 0 8px rgba(126,200,255 ,0);}
+
+} @keyframes pulseSun{0% ,100%{box-shadow:0 0 0 0 rgba(255,203,97, 0.5);}50%{box-shadow:0 0  0 8px rgba(255,203,97,0);} } @keyframes pulseSakura{0% ,100%{box-shadow:0 0 0 0 rgba(255,159,196,0.5 );}50%{box-shadow:0  0 0 8px rgba(255,159,196,0);} }
+.bi.live-glow{ background :rgba(255,255,255,0.07);}
+.bi[data-buff="rain"].live-glow{box-shadow:inset 0 0 24px rgba(126,200 ,255,0.15);}
+.bi[data-buff="sun"].live-glow{box-shadow:inset 0 0 24px rgba(255,203,97,0.15);}
+.bi[data-buff="sakura"].live-glow{box-shadow:inset 0 0 24px rgba(255,159,196,.15);}
+.bufftimer{
+    margin-top:8px; height: 5px ; 
+    border-radius :3px; overflow:hidden; 
+    background:rgba(255,255,255,0.1); 
+
+    display: none;
+}
+.bufftimer.active{display:block;} .bufftimer-fill {
+    height:100%; transition: width 0.3s linear;
+    border-radius: 3px; 
+
+}.bi[data-buff="rain"] .bufftimer-fill{
+    background:linear-gradient(90deg, #4ba030,#bfe4ff);
+
+}.bi[data-buff="sun"] .bufftimer-fill{
+    background:linear-gradient(90deg, #e08a1f,#ffe3a3);
+
+}.bi[data-buff="sakura"] .bufftimer-fill{
+    background:linear-gradient(90deg, #e0538a,#ffc9de);
+
+}
+.bi-name:before{content:'🌟'; opacity:0.7; 
+font-size:9px;}
+
+@media(max-width:1111px){  /*11 11 forever manifesting*/
+
+#buffpanel{
+width:100%; max-width: 420px; margin:0 auto;  top:auto;}}
+
+/*new feature  for js sync for the property cubic beizer i used ai as placeholder method not work
+*/
+.bi.justActivated::before{ content:'' ; position:absolute ; 
+    inset:-8px; border-radius:17px; background: radial-gradient(circle,rgba(255,255,255,0.5), transparent 72%); animation: buffFlash 0.7s cubic-bezier(.2,.8,.3,1) forwards; pointer-events: none;
+    z-index :2;
+
+} @keyframes buffFlash{
+    from{opacity:1; transform :scale(0.85);} to{
+        opacity:0; 
+        transform:scale(1.3);
+    }
+} 
+
+
+
+/* 10 39*/@media (max-width:1352px){ 
+body{
+    display:flex; flex-direction:  column;
+    align-items :center; 
+gap:20px;  padding
+:17px;
+}
+#buffpanel,#wrap,
+ #spanel {
+    position:static; width:100%; 
+    max-width:896px; 
+}
+}
+
+/*my phone was showing everything very tight and my friends complain too*/
+@media( max-width:597px ){
+    body{padding :0 9px;}
+     #header {padding:1.2rem 0 1rem;}
+ #themeSwitch{
+    position:static; 
+    justify-content: center; margin-bottom :10px; 
+} #sbtn{
+    position:static; display:block ; 
+
+    margin:0 auto 10px; 
+width :fit-content ;
+
+}  #header h1{
+    font-size:19px; 
+} #header p{
+    font-size:11px; padding: 0 8px;
+} 
+/*this in my phone was taking over the whole screen */ #soundmenu{
+    left:50%; right:auto; 
+transform :translateX(-50%); 
+top:auto; margin-top:  7px; position: static; width:100% ;
+max-width:284px; margin-left: auto;
+
+margin-right: auto ;
+} .stat{ font-size:10.6040px ;} #stats{gap :12px;} #canvas{
+    max-width: 100%; height:auto ; 
+aspect-ratio: 860/ 440;
+}
+#inputarea{max-width :100% ; padding: 1rem 0  1.5rem ;} #typebox{ font-size: 13px ;} 
+#tip{font-size: 13px ;} 
+#clearbtn , #downloadbtn,#newplantbtn{
+    display:block; width :90% ; margin:8px auto;
+}
+#spanel,#buffpanel{
+    max-width: 100% ;
+    padding: 13px;
+} .sitem, .bi{
+display: flex; flex-direction: column; gap: 4px;
+}  }
+/*nokia ahh phones*/
+@media(max-width: 380px){
+    #header h1{font-size :18px;} .stat{font-size :9.6px;} #stats{gap :8px;}
+} #cSong{width: 100%; 
+margin-top:8px ;
+color:var(--text-sub);
+font-family: courier;}#playcBtn{
+    display:block ;
+    width:100% ;
+    margin :8px 0; padding:7px 12px ;
+    background: var(--panel-bg); color:var(--text-main); border:1px solid var(--panel-border);
+    border-radius: 9px; cursor:pointer; font-family:courier ; 
+    transition: background .2s, color .2s, border-color .2s;
+} #playcBtn:hover {background: var(--btn-hover-bg); 
+color:var(--btn-hover-text);}#cVolume{
+    width:100%; margin-top:7px;
+}#loadscreen {
     position:fixed ;
     inset :0; 
     z-index:999; display:flex; /*the knight said ai gen screen are discouraged and assets are boring so here i write the code myself :}*/
