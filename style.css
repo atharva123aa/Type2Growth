@@ -365,21 +365,23 @@ margin-top:6px
 background:var(--panel-border);}
 .ls-bar-fill{height:100%; width: 0%; background: var(--accent);
 transition:width 0.25s
-ease ;}#mapBtn{position: absolute;
-top :0.4rem ; right :6.3rem ; font-size: 12px; 
-font-family:Courier; color :var(--text-sub);border:1px solid var(--panel-border); border-radius: 19px;
-padding: 6px 14px; 
-cursor:pointer; background:var(--panel-bg); transition: background 0.2s ,color 0.2s ;}
-#mapBtn:hover{background:var(--btn-hover-bg); color:var(--btn-hover-text);} #mapMenu{
+ease ;}#mapBtn{position: fixed;
+top :20px ; right :20px; writing-mode: vertical-rl; text-orientation: mixed; width: 48px; padding:
+12px 8px ; background  :var(--panel-bg); color:var(--text-sub) ; border:1px solid var(--panel-border);
+ border-radius: 19px; font-family :courier ; font-size:13px ; cursor:pointer;
+z-index :1000; 
+transition: background 0.2s ,color 0.2s , transform .2s ease;}
+#mapBtn:hover{background:var(--btn-hover-bg); color:var(--btn-hover-text); transform :translateY(-2px)}; #mapMenu{
     position: absolute;; top: 2.6rem; right:6.3rem ; 
     width:272px ; display: flex; 
     gap:10px;
     background: var(--panel-bg); border :1px solid  var(--panel-border);  border-radius :12px ;
-padding:14px; box-shadow :0 8px 20px rgba(0,0,0,0.16); z-index: 9;
+padding:14px; box-shadow :0 8px 20px rgba(0,0,0,0.16); z-index: 99;
 }
 .mapcard{flex:1; text-align: center ;
 cursor :pointer; font-size:10px; 
-font-family:courier ; color:var(--text-sub);}.mapcard.locked{cursor:not-allowed ; opacity:0.57 ;}.mapthumb{
+font-family:courier ; color:var(--text-sub); position:relative ; z-index: 100;
+}.mapcard.locked{cursor:not-allowed ; opacity:0.57 ;}.mapthumb{
     width:100% ; height:52px; border-radius: 8px; margin-bottom:5px; border:2.0001px solid transparent; transition: border-color .2s; 
 } .mapcard:not(.locked):hover .mapthumb{border-color: var(--accent);}.mapcard.active .mapthumb{border-color: var(--accent);
 box-shadow :0 0 0 2px var(--accent);}
@@ -395,12 +397,14 @@ width:100%;  max-width:284px ; margin:0 auto 8px;}
 }
 
 #fogOverlay{
-    position :absolute ; inset:0; pointer-events:  none ; background:radial-gradient( ellipse at  center, 
+    position :fixed ; inset:0; pointer-events:  none ;z-index: 8 ; 
+    backdrop-filter: blur(3px) brightness(0.76); -webkit-backdrop-filter: blur(3.01px) brightness(0.75);
+    background:radial-gradient( ellipse at  center, 
     transparent
-40%, rgba(10,5,15,0.5 ) 100%) ; 
+40%, rgba(10,5,15,0.5 ),rgba(10,5,15,0.5) 100%) ; 
 animation:fogPulse 4s ease-in-out infinite;}@keyframes fogPulse{0%,100%{opacity:0.71;} 50%{opacity: 1 ;}
 
-} canvas.shake{
+} canvas.jumpflash{filter:brightness(2.3) contrast(1.3);}canvas.shake{
     animation:canvasShake 0.42s ease;
 }
 @keyframes canvasShake{0%,100%{transform: translate(0,0);}
