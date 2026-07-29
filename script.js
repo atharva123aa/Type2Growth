@@ -1,4 +1,3 @@
-
 const canvas=document.getElementById('canvas');
 const ctx= canvas.getContext('2d');
 const typebox= document.getElementById('typebox');
@@ -30,6 +29,27 @@ flowers:[
 
 ], flowerCenter: ['#fff5aa','#ffe680','#fff3c4','#ffe08f']
 };
+const PALETTES= {
+    classic :{stems :PALETTE.stems,
+        leaves: PALETTE.leaves, flowers:PALETTE.flowers, flowerCenter: PALETTE.flowerCenter}, graveyard:{
+            stems:['#2b2530','#332b3a','#241f2b'],
+            flowers :['#6e2f5e','#8a3d74','#5a2450'], flowerCenter :['#c9a3d9','#a878c4']
+        }
+    };
+const sky_overrides= {graveyard:{sunlight:{t:'#241a33',m:'#2e2040',b:'#3a2a51', g: '#180f24',ge:'#100a18'
+},rain:{t:'#1c1428',m:'#241a33',b:'#2c2140', g: '#130d1c',ge:'#0c0812'}, breeze:{t:'#281f3d',m:'#32284a',b:'#3d3159', g: '#1a1327',ge:'#120c1c'},
+blossom:
+{t:'#2e1f42',m:'#382650',b:'#432e5e', g: '#1e1428',ge:' #150e1e'}, night:{t:'#0a0612 ',m:'#120a1c',b:'#1a1208', g: '#08050c',ge:'#040308'}
+
+
+}};
+const themeMusic ={graveyard: newAudio("horror.mp3")}; Object.values(themeMusic).forEach(a=>{
+    a.loop= true; a.volume=0.9;
+});//for jumpscare ahh! like 0.9🤣 
+letcurrentMapTheme =
+localStorage.getItem('gardenMap') ||'classic';
+let tombstones=[];
+
 const rain=new Audio("r.mp3")
 const blossom=new Audio("s.mp3")
 const forest=new Audio("f.mp3")
@@ -115,6 +135,69 @@ function updateAudioFade(){
 }
 function applyMode(mode){ currentMode=mode; skyTarget=mode_sky[mode]; audioTarget=mode_audio[mode]
 ;}
+
+const mode_sky_d =
+JSON.parse(JSON.stringify(mode_sky));
+function playThemeMusic(id){
+    Object.entries(themeMusic).forEach((
+        [key,audio])=>{
+            if (key===id) {if(musicStarted) audio.play().catch(()=>{});
+        } else{audio.pause(); audio.currentTime =0;}
+    });
+}
+function spawnTombstones(){
+    tombstones =[];
+    const count =3 +Math.floor(Math.random()* 3); 
+    for(let i=0;i<count; i++){
+        tombstones.push({x:rnd(30,W-30),
+            y:H-18, r:rnd (11,16)
+        });
+    }
+} function screenShake() {
+    canvas.classList.add('shake');
+    setTimeout(()=> canvas.classList.remove('shake'),420);
+}
+function applyMapTheme(id){mapMenu.classList.add('hidden');
+    if (id==='samurai') return; currentMapTheme=id ; localStorage.setItem('gardenMap',id );
+const pal = PALETTES[id]|| PALETTES.classic ; PALETTE.stems= pal.stems;
+
+PALETTE.leaves=pal.leaves; 
+PALETTE.flowers= pal.flowers; 
+PALETTE.flowerCenter= pal.flowerCenter;
+Object.assign(mode_sky,sky_overrides[id] ||mode_sky_d); 
+ applyMode(currentMode);
+ document.querySelectorAll('.mapcard').forEach(
+    c=> c.classList.toggle('active', 
+        c.dataset.map ===id)
+    ); playThemeMusic(id); 
+    if (id==='graveyard'){
+        spawnTombstones();
+        screenShake();
+        document.getElementById('fogOverlay')?.classList.remove('hidden');
+
+    } else{tombstones=[];
+document.getElementById('fogOverlay')?.classList.add('hidden');
+    }
+ 
+}
+const mapBtn= document.getElementById('mapBtn'); 
+const mapMenu = document.getElementById('mapmenu'); mapBtn.addEventListener('click', ()=>
+
+mapMenu.classList.toggle('hidden')
+);
+document.addEventListener('click',(e) =>
+{if(!mapMenu.classList.contains('hidden') && !mapMenu.contains(e.target) &&
+
+    e.target!==mapBtn) 
+mapMenu.classList.add('hidden');
+
+});
+
+document.querySelectorAll('.mapcard').forEach(
+    card =>{
+        card.addEventListener('click',() =>applyMapTheme(card.dataset.map));
+    }
+);
 function  scheduleNextMode(){
     const wait =rnd(20000,45000); // imo 20 to 45 sec is fast like 10 time less minecraft
     setTimeout(()=>{
@@ -146,6 +229,11 @@ if (currentMode==='breeze' &&Math.random()<0.08){
 if( currentMode==='blossom' && Math.random()<0.10){particles.push({type:'petal',x:rnd(0,W), y :-10,vx:rnd(-0.4,0.4), vy:rnd(0.6,1.4), rot:rnd(0,Math.PI*2),
 spin:rnd(-0.04,0.04),size:rnd(5,9), color:pick(PALETTE.flowers)});
 }
+if (currentMapTheme ==='graveyard'&& Math.random() <0.05){particles.push({
+    type:'fog', x: rnd(0,W), y:H-30+rnd(-10,10),
+    vx:rnd(0.1,0.4),  vy:0, 
+    size :rnd(40,80), alpha:0.12
+});}
 }
 
 function updateParticles(){
@@ -186,6 +274,20 @@ ctx.ellipse(0,0 ,p.size *0.5,p.size*0.25,0,0,Math.PI*2);
 ctx.fill();
 ctx.globalAlpha =1 ;
  ctx.restore();}}
+
+
+//todo the  same for samurai eeffect of blood rain too
+if (currentMapTheme ==='graveyard'){for (const p of particles){
+    if(p.type ==='fog'){ctx.save(); 
+         ctx.globalAlpha =p.alpha ;
+ctx.fillStyle ='#cfc9d6';
+ctx.beginPath();
+ctx.ellipse(p.x,p.y,p.size,p.size *0.3,0,0,Math.PI*2);
+ctx.fill(); 
+        ctx.restore();
+    }
+}}
+
 }
 /*will keep this feature rare so thers more to explore*/
 let sparkles=[];
