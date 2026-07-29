@@ -394,3 +394,17 @@ box-shadow :0 0 0 2px var(--accent);}
 width:100%;  max-width:284px ; margin:0 auto 8px;}
 }
 
+#fogOverlay{
+    position :absolute ; inset:0; pointer-events:  none ; background:radial-gradient( ellipse at  center, 
+    transparent
+40%, rgba(10,5,15,0.5 ) 100%) ; 
+animation:fogPulse 4s ease-in-out infinite;}@keyframes fogPulse{0%,100%{opacity:0.71;} 50%{opacity: 1 ;}
+
+} canvas.shake{
+    animation:canvasShake 0.42s ease;
+}
+@keyframes canvasShake{0%,100%{transform: translate(0,0);}
+20%{transform :translate(-4px,3px);} 40%{transform: translate(4px,-3px);}
+60%{transform :translate(-3px,-2px);} 
+80%{transform: translate(3px ,2px);}
+}
