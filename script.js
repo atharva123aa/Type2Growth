@@ -32,7 +32,7 @@ flowers:[
 const PALETTES= {
     classic :{stems :PALETTE.stems,
         leaves: PALETTE.leaves, flowers:PALETTE.flowers, flowerCenter: PALETTE.flowerCenter}, graveyard:{
-            stems:['#2b2530','#332b3a','#241f2b'],
+            stems:['#2b2530','#332b3a','#241f2b'],leaves:['#4a3d55','#3a3140','#584a63'],
             flowers :['#6e2f5e','#8a3d74','#5a2450'], flowerCenter :['#c9a3d9','#a878c4']
         }
     };
@@ -43,10 +43,11 @@ blossom:
 
 
 }};
-const themeMusic ={graveyard: newAudio("horror.mp3")}; Object.values(themeMusic).forEach(a=>{
+const themeMusic ={graveyard: new
+    Audio("horror.mp3")}; Object.values(themeMusic).forEach(a=>{
     a.loop= true; a.volume=0.9;
 });//for jumpscare ahh! like 0.9🤣 
-letcurrentMapTheme =
+let currentMapTheme =
 localStorage.getItem('gardenMap') ||'classic';
 let tombstones=[];
 
@@ -181,7 +182,7 @@ document.getElementById('fogOverlay')?.classList.add('hidden');
  
 }
 const mapBtn= document.getElementById('mapBtn'); 
-const mapMenu = document.getElementById('mapmenu'); mapBtn.addEventListener('click', ()=>
+const mapMenu = document.getElementById('mapMenu'); mapBtn.addEventListener('click', ()=>
 
 mapMenu.classList.toggle('hidden')
 );
@@ -484,11 +485,29 @@ ctx.moveTo(x-6,y-50); ctx.lineTo(x+14,y-68);
    }
 }
 ctx.globalAlpha =1;
-ctx.restore();} 
+ctx.restore();}
+function drawTombstone(x,y,r){
+ctx.save();
+
+ctx.fillStyle ='#5a5560'; ctx.beginPath();
+ctx.moveTo(x-r,y-r*2.1); ctx.arc(x,y-r*2.1001,r,Math.PI,0);
+ctx.lineTo(x+r,y);
+       ctx.closePath();
+ ctx.fill() ; ctx.strokeStyle ='#3b3640' ; ctx.lineWidth= 1.5; 
+ctx.beginPath(); ctx.moveTo(x-r *0.5,y-r); 
+ctx.lineTo(x+r*.5,y-r); 
+ctx.moveTo(x,y-r *1.5); 
+ctx.lineTo(x,y-r* 0.5); 
+ctx.stroke(); ctx.restore ();
+} 
 function drawSpecialPlants(){
     if(unlocked.sunflower) drawSunflower(W-70,H-18);
         if(unlocked.dandelion) drawDandelion(W-30, H-18);
             if(unlocked.blossomtree) drawBlossomTree(W-130,H-18);
+            if (currentMapTheme=== 'graveyard'){
+            for (const t of tombstones) 
+                drawTombstone(t.x,t.y, t.r);
+            }
 }
 
 const enchantColors =['#9fd3ff', '#ffd166','#ff9fc4','#c9a0ff','#8fffc4'];
@@ -816,8 +835,18 @@ this.fallen.push({x:gx,y:gy,angle:rnd(0,Math.PI*2),len:rnd(12,20),color:this.lea
         const wilt=leaf.wilt||0;
         ctx.save();
         ctx.translate(leaf.x,leaf.y)
-        ctx.rotate(leaf.angle);
-        ctx.fillStyle =wilt>0.5 ? '#c9a15a':leaf.color;
+        ctx.rotate(leaf.angle); if(currentMapTheme ==='graveyard'){
+
+        
+        ctx.fillStyle =wilt>0.5 ? '#2a2530':leaf.color;
+    ctx.globalAlpha=0.90* (1-wilt *0.5 );
+ctx.beginPath();
+ctx.moveTo (0,0);
+ctx.lineTo(leaf.len *0.5, -leaf.len *0.14 );
+ctx.lineTo(leaf.len,0);
+ctx.lineTo(leaf.len *0.5 ,  leaf.len*0.14 );
+ctx.closePath();
+ctx.fill();} else {ctx.fillStyle =wilt>0.5 ? '#c9a15a':leaf.color;
     ctx.globalAlpha=0.88* (1-wilt *0.5 );
 ctx.beginPath();
          ctx.ellipse(leaf.len*0.5,
@@ -825,7 +854,7 @@ ctx.beginPath();
             leaf.len *0.5, leaf.len * 0.18 ,
             0,0,
             Math.PI *2
-         )  ; ctx.fill();
+         )  ; ctx.fill();}
         ctx.globalAlpha = 1;
     ctx.restore();  } drawFlower(f){
         const wilt=f.wilt || 0;
@@ -1055,7 +1084,9 @@ function startMusic(){
 
     if(musicStarted) return;
     musicStarted= true;
-    Promise.all([rain.play(), blossom.play(), forest.play()]) 
+    Promise.all([rain.play(), blossom.play(), forest.play()]) .then(()=> 
+{if (themeMusic[currentMapTheme])
+    themeMusic[currentMapTheme].play().catch(()=>{});})
     .catch((err)=>{
     console.warn("blocked idiot,retry:}",err);
     musicStarted=false;
