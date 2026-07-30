@@ -246,7 +246,31 @@ BOX-SHADOW :0 0  16PX #7EC8FF80 ;} .bi[data-buff="sun"] .buffbtn:hover:not(:disa
 }
 .bi-name:before{content:'🌟'; opacity:0.7; 
 font-size:9px;}
+.bi[data-buff="photosynthesis"]{border-left-color:#7cff8c;}
+.bi[data-buff="photosynthesis"] .bi-name{color:#b8ffc2;} .bi[data-buff="photosynthesis"]::after{
+    content:''; position:absolute ;
+    inset:0; pointer-events: none; opacity:0;
+    background:radial-gradient(circle at  20% 0%,#7cff8c40, transparent 56%);
+    transition:opacity 0.3s ;
+}.bi[data-buff="photosynthesis"]:hover::after{opacity:1;}
+.bi[data-buff="photosynthesis"].buffbtn:hover:not(:disabled){background: #7cff8c; 
+border-color:#7cff8e;
+color: #0d3a15 ; 
+box-shadow: 0 0 15px 
+#7cff8c40;}
+.bi[data-buff="photosynthesis"].buffbtn.live{background:#7cff8c; border-color:#7cff8c; 
+color:#0d3a15; 
+animation :pulsePhoto 1.4s ease-in-out infinite;}
 
+@keyframes pulsePhoto{0% ,100%{box-shadow : 0 0 0 0 rgba(124,255,140, 0.5);}
+50%{box-shadow:0 0 0 8px rgba(124,255,140,0);}}
+
+.bi[data-buff="photosynthesis"].live-glow{box-shadow :inset 0 0 24px rgba(124,255,140, 0.15);}.bi[
+    data-buff="photosynthesis"
+]
+.bufftimer-fill{
+    background:linear-gradient(90deg,#2f8a3f,#c2ffca);
+}
 @media(max-width:1111px){  /*11 11 forever manifesting*/
 
 #buffpanel{
