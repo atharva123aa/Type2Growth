@@ -1,4 +1,4 @@
- const canvas=document.getElementById('canvas');
+const canvas=document.getElementById('canvas');
 const ctx= canvas.getContext('2d');
 const typebox= document.getElementById('typebox');
 const clearbtn=document.getElementById('clearbtn');
@@ -727,12 +727,38 @@ let lastTypedAt=Date.now();
 function applyDecay() {
     if (buffActive('sun')) return;
     const idleMs= Date.now()- lastTypedAt; if(idleMs <15000 ) return;
-    const decayAmount= 0.00025;
+    const decayAmount= currentMapTheme==='graveyard' ?0.0012:0.00025;
     for(const plant of plants){
     wiltSeg(plant.root,decayAmount);
     for(const f of plant.fallen) f.wilt=
     clamp((f.wilt||0)+decayAmount,0,1);    }
-} function wiltSeg( seg,amount){
+    if(currentMapTheme ==='graveyard') checkrTrees();
+
+
+} function getAvgWilt(seg){
+    let total=seg.wilt||0, count =1;
+    for (const  c of seg.children){
+        const r=getAvgWilt(c) ; total+=r.total; count+=r.count;}
+        return {total,count};
+    
+}
+
+function rustandRegrow(index){
+    const p= plants[index];
+    const x=p.x;
+    for (let i=0; 
+        i<12; i++){sparkles.push({x:x+rnd(-20,20), y:H-30+rnd(-10,10),vx:rnd (-0.3,0.3), 
+vy:rnd(-0.6,-0.1), life :1 ,
+size:rnd(2,4), color:'#6e2f5e'
+        });} plants[index]=new Plant(x);
+}
+function checkrTrees(){
+    plants.forEach((p,i)=>{
+        const {total,count} =getAvgWilt(p.root); if
+        (total/count >0.92) rustandRegrow(i);
+    });
+}
+function wiltSeg( seg,amount){
     seg.wilt=clamp((seg.wilt|| 0)+amount,0,1);
     for (const leaf of seg.leaves)leaf.wilt= clamp((leaf.wilt|| 0 )+ amount,0,1);
 if (seg.flower)seg.flower.wilt= clamp((seg.flower.wilt||0)+amount,0,1);
@@ -1254,6 +1280,26 @@ if (saved)
 }
 typebox.focus();
 applyMapTheme(currentMapTheme,true)// forgot this like things were bugging a lot not even kidding i got fog instead of flower
+
+canvas.addEventListener('click',(e)=>{
+if(currentMapTheme!=='graveyard' || !plants.length) return; 
+const rect =canvas.getBoundingClientRect();//btw this function was something i wanted but no idea how to make so i used gemini for js features to do so 
+const mx=(e.clientX-rect.left)*(W/rect.width);
+plants.forEach((p,i)=>{
+    if(Math.abs(mx-p.x)< 40){const {total ,count}=getAvgWilt(p.root);
+    const AvgWilt=total/count;
+        if(AvgWilt >0.35){
+            rustandRegrow(i); 
+            screenShake();
+        }
+
+}
+});
+});
+
+
+
+
 
 function loop(){ 
  // as my alch theme was endless so this was neccesary
