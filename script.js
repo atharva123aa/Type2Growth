@@ -39,14 +39,31 @@ const PALETTES= {
 const sky_overrides= {graveyard:{sunlight:{t:'#241a33',m:'#2e2040',b:'#3a2a51', g: '#180f24',ge:'#100a18'
 },rain:{t:'#1c1428',m:'#241a33',b:'#2c2140', g: '#130d1c',ge:'#0c0812'}, breeze:{t:'#281f3d',m:'#32284a',b:'#3d3159', g: '#1a1327',ge:'#120c1c'},
 blossom:
-{t:'#2e1f42',m:'#382650',b:'#432e5e', g: '#1e1428',ge:' #150e1e'}, night:{t:'#0a0612 ',m:'#120a1c',b:'#1a1208', g: '#08050c',ge:'#040308'}
+{t:'#2e1f42',m:'#382650',b:'#432e5e', g: '#1e1428',ge:'#150e1e'}, night:{t:'#0a0612 ',m:'#120a1c',b:'#1a1208', g: '#08050c',ge:'#040308'}
 
 
 }};
 const themeMusic ={graveyard: new
     Audio("horror.mp3")}; Object.values(themeMusic).forEach(a=>{
     a.loop= true; a.volume=0.9;
-});//for jumpscare ahh! like 0.9🤣 
+});//jasdfasdjasdfasd
+const hSFX =[new Audio("h1.mp3"),
+    new Audio("h2.mp3"), new Audio("h3.mp3"),new Audio("h4.mp3"),
+    new Audio("h5.mp3"), new Audio("h6.mp3")
+] ; 
+hSFX.forEach(a=>
+    a.volume=0.67
+); 
+function schedulehSFX(){const wait =rnd(9000,20000);
+setTimeout(()=>{
+    if(currentMapTheme ==='graveyard' && musicStarted && !document.hidden){
+        pick(hSFX).play().catch(()=> {});
+
+    } schedulehSFX();
+},
+wait);
+}
+schedulehSFX();
 let currentMapTheme =
 localStorage.getItem('gardenMap') ||'classic';
 let tombstones=[];
@@ -158,7 +175,7 @@ function spawnTombstones(){
     canvas.classList.add('shake');
     setTimeout(()=> canvas.classList.remove('shake'),420);
 }
-function applyMapTheme(id){mapMenu.classList.add('hidden');
+function applyMapTheme(id ,skipClear){mapMenu.classList.add('hidden');
     if (id==='samurai') return; currentMapTheme=id ; localStorage.setItem('gardenMap',id );
 const pal = PALETTES[id]|| PALETTES.classic ; PALETTE.stems= pal.stems;
 
@@ -171,6 +188,13 @@ Object.assign(mode_sky,sky_overrides[id] ||mode_sky_d);
     c=> c.classList.toggle('active', 
         c.dataset.map ===id)
     ); playThemeMusic(id); 
+    if(!skipClear){
+        plants=[];
+        totalStems = 0; totalLeaves =0 ; totalFlowers =0; charCount= 0;
+        typebox.value='';pLen=0; 
+        localStorage.setItem("gardenText","");
+        ctx.clearRect(0,0,W,H);
+    }
     if (id==='graveyard'){
         spawnTombstones();
         screenShake();
@@ -182,23 +206,26 @@ document.getElementById('fogOverlay')?.classList.add('hidden');
  
 }
 const mapBtn= document.getElementById('mapBtn'); 
-const mapMenu = document.getElementById('mapMenu'); mapBtn.addEventListener('click', ()=>
-
+const mapMenu = document.getElementById('mapMenu'); mapBtn.addEventListener('click', (e)=>{
+e.stopPropagation();
 mapMenu.classList.toggle('hidden')
-);
+});
 document.addEventListener('click',(e) =>
 {if(!mapMenu.classList.contains('hidden') && !mapMenu.contains(e.target) &&
 
-    e.target!==mapBtn) 
+    e.target !== mapBtn) 
 mapMenu.classList.add('hidden');
 
 });
 
-document.querySelectorAll('.mapcard').forEach(
-    card =>{
-        card.addEventListener('click',() =>applyMapTheme(card.dataset.map));
+document.querySelectorAll('.mapcard').forEach(card =>{
+        card.addEventListener('click',(e) =>{
+            e.stopPropagation();   mapMenu.classList.add('hidden')
+            if (card.classList.contains('locked')) return;
+         
+            applyMapTheme(card.dataset.map);
     }
-);
+);});
 function  scheduleNextMode(){
     const wait =rnd(20000,45000); // imo 20 to 45 sec is fast like 10 time less minecraft
     setTimeout(()=>{
@@ -363,7 +390,7 @@ flashCard(id);
 
 
         });}} function flashCard(id){
-            const timerEl=document.querySelector(`.bufftimer[data-timer="${id} "]`);
+            const timerEl=document.querySelector(`.bufftimer[data-timer="${id}"]`);
             if(!timerEl) return;
             const card=timerEl.closest('.bi'); 
             card.classList.remove('justActivated');
@@ -399,7 +426,7 @@ document.querySelectorAll('.bufftimer').forEach (bar=>{
 
 
 let unlocked={sunflower:false, dandelion: false, 
-     blossomtree:false
+     blossomtree:false ,rose:false,cherryframe : false 
 }; 
 
 const savedWallet=localStorage.getItem("gardenWallet");
@@ -410,7 +437,11 @@ if (savedUnlocks ) unlocked=Object.assign(unlocked ,JSON.parse(savedUnlocks))
 const shopItems =[{id:'sunflower' ,cost:{leaves:30, flowers:5}},
     {id:'dandelion' , cost :{leaves:18, 
 flowers:3}},
-    {id:'blossomtree',cost:{ leaves:45, flowers:9}}
+    {id:'blossomtree',cost:{ leaves:45, flowers:9}},
+    {id :'rose',cost :{
+        leaves:22,
+        flowers:6
+    }}, {id:'cherryframe', cost: {leaves:35, flowers: 10}}
 ];
 
 function saveWallet(){
@@ -486,6 +517,50 @@ ctx.moveTo(x-6,y-50); ctx.lineTo(x+14,y-68);
 }
 ctx.globalAlpha =1;
 ctx.restore();}
+
+function drawRose(x,y){ctx.save ();
+    ctx.strokeStyle ='#3e6b3a'; ctx.lineWidth=3;
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+ctx.lineTo(x,y-60); ctx.stroke();  ctx.translate(x,y-66);
+for (let i=0; i<3; i++){
+    ctx.save();
+    ctx.rotate (i*0.35); ctx.fillStyle =i% 2===0?
+    '#c2185b':'#e0507e';
+     ctx.beginPath() ; ctx.arc(0,0,10-i*2,0,Math.PI*2);
+     ctx.fill() ;ctx.restore();
+}
+ctx.fillStyle ='#8a1338';
+ctx.beginPath();
+ctx.arc(0,0,4,0,Math.PI*2) ;ctx.fill(); 
+ctx.restore();}
+function drawCherryFrame(){ctx.save();
+    const spots =[[20,20],[W-20,20 ]]; for (const [cx,cy] of spots){
+        for(let  i=0; i<8;
+            i++
+        ){ctx.fillStyle ='#ffb7c5';
+            ctx.globalAlpha =0.85; ctx.beginPath();
+        ctx.ellipse(cx+rnd(-30,30),cy+rnd(-15,25),
+    6,4,
+rnd(0,Math.PI),0, 
+Math.PI* 2);
+     ctx.fill();   }
+    }
+
+ctx.globalAlpha =1;
+ctx.restore()
+;
+}
+
+
+
+
+
+
+
+
+
+
 function drawTombstone(x,y,r){
 ctx.save();
 
@@ -504,6 +579,7 @@ function drawSpecialPlants(){
     if(unlocked.sunflower) drawSunflower(W-70,H-18);
         if(unlocked.dandelion) drawDandelion(W-30, H-18);
             if(unlocked.blossomtree) drawBlossomTree(W-130,H-18);
+            if(unlocked.rose) drawRose(W-190,H-18); if (unlocked.cherryframe) drawCherryFrame();
             if (currentMapTheme=== 'graveyard'){
             for (const t of tombstones) 
                 drawTombstone(t.x,t.y, t.r);
@@ -1029,10 +1105,13 @@ clearbtn.addEventListener('click',() => {
 cAudio.currentTime =0;
 playcBtn.textContent = "play custom song"
 }) ;
-soundbtn.addEventListener("click",() => {
-    soundmenu.classList.toggle("hidden");
-
-});
+soundbtn.addEventListener("click",(e) => {
+    e.stopPropagation();
+    soundmenu.classList.toggle("hidden");}); document.addEventListener('click',(e)=>{
+        if(!soundmenu.classList.contains('hidden')&& !soundmenu.contains(e.target)
+        && e.target !==soundbtn){soundmenu.classList.add('hidden');}
+    }
+);
 
 downloadbtn.addEventListener("click",()=> {
 const  link=document.createElement("a");
@@ -1133,6 +1212,7 @@ if (saved)
     typebox.dispatchEvent(new Event("input"));
 }
 typebox.focus();
+applyMapTheme(currentMapTheme,true)// forgot this like things were bugging a lot not even kidding i got fog instead of flower
 
 function loop(){  // as my alch theme was endless so this was neccesary
  updateSky();
