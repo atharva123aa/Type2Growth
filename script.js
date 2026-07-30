@@ -1,4 +1,4 @@
-const canvas=document.getElementById('canvas');
+ const canvas=document.getElementById('canvas');
 const ctx= canvas.getContext('2d');
 const typebox= document.getElementById('typebox');
 const clearbtn=document.getElementById('clearbtn');
@@ -362,11 +362,14 @@ let wallet={leaves:0, flowers:0};
 const BUFF_DURATION =30000;
 const buffCosts ={
     rain:{leaves:20, flowers:0}, sun:{leaves:25, flowers:5},
-    sakura:{leaves:0, flowers:15}
+    sakura:{leaves:0, flowers:15}, 
+    moon :{leaves:30, flowers:10}, photosynthesis:{leaves:35, flowers:0}//1st time i used bio in smthg 
+
 };
 //one more blessing is what i guess goin to get added next update
 let  buffs={rain:{until:0},
-sun:{until:0}, sakura :{until:0}};
+sun:{until:0}, sakura :{until:0},moon:{until:0}
+,photosynthesis:{until:0}};
 function buffActive(id){return Date.now() < buffs[id].until;
 
 } function activateBuff(id){
@@ -630,6 +633,41 @@ ctx.stroke();
 ctx.beginPath(); 
 ctx.arc(cx,cy,r-4, 0,Math.PI*2); ctx.stroke(); ctx.restore();
 }
+
+function drawBuffMoon(){
+if(!buffActive('moon')) return; const cx=W-90, 
+cy =75, r=30;
+ctx.save(); ctx.fillStyle ='#f0eaff';
+
+ctx.beginPath() ; ctx.arc(cx,cy,r, 0,Math.PI *2); 
+ctx.fill(); ctx.fillStyle =skyNow.t||'#0c1730'; ctx.beginPath();
+ctx.arc(cx+12,cy-6,r*0.85,0,Math.PI* 2);  ctx.fill(); ctx.strokeStyle ='rgba(240,234,255,0.5)' ; 
+ctx.lineWidth =2 ;
+
+const  t=Date.now()/1000;
+for(let i= 0;i<6; i++){
+const angle =(i/6
+)*Math.PI*2 + t*0.1;
+ctx.beginPath();
+ctx.moveTo(cx +Math.cos(angle) *(r+8), cy+Math.sin(angle)* (r+8));
+ctx.lineTo(cx +Math.cos(angle) *(r+16), cy+Math.sin(angle)* (r+16));// though i have got the cos sin concept but still i face probs when i do myself
+ctx.stroke();
+
+}
+ctx.restore();
+
+} function spawnPhotoSparks(){
+if (!buffActive('photosynthesis')||!plants.length) return ;if(
+    Math.random()<0.3
+){const p=pick(plants);
+    if(!p.tips.length)
+        return ;
+    const tip=pick(p.tips);
+sparkles.push({x:tip.ex,y:tip.ey,vx:rnd(-0.4,0.4),vy: rnd(-1.4,-0.5),
+    life :1, size:rnd(2,4),
+color:'#7cff8c'
+});
+}}
 let typingSpeedWPM= 0; 
 let charTimestamps=[]; 
 function rkfs(){
@@ -804,7 +842,8 @@ const leafChance =buffActive('rain') ? 0.8:0.5;
     const bLen=clamp(20+ speed*0.4 +freq *1.6,14,49);
     const len= rnd(bLen*0.8,bLen*1.2);
     const sunThinning=buffActive('sun') ?0.15 :0.6;
-    const thick=Math.max(1,tip.thick- sunThinning);
+    const photoFatten= buffActive('photosynthesis')? 1.4: 0;
+    const thick=Math.max(1,tip.thick- sunThinning+ photoFatten);
     const child=new Segment(tip.ex, tip.ey,NewAngle,len,thick,this.stemColor, tip.depth +1); tip.children.push(child);
     const idx= this.tips.indexOf(tip);
     if(idx !== -1) 
@@ -1054,6 +1093,7 @@ function render() {
     drawBackground();
     drawSpecialPlants();
     drawBuffSun();
+    drawBuffMoon();
     drawBoostMeter() ;
     drawStars();
     for (const plant of plants ) {
@@ -1071,6 +1111,7 @@ drawParticles(); drawSparkles();
         lastTime=now ;
         updateBoost(dt<180);
         speed= speed*(1+boost*1.5);
+        if(buffActive('moon')) speed*=1.8;
     if (val.length<pLen){
         pLen=val.length;
         return;
@@ -1214,11 +1255,16 @@ if (saved)
 typebox.focus();
 applyMapTheme(currentMapTheme,true)// forgot this like things were bugging a lot not even kidding i got fog instead of flower
 
-function loop(){  // as my alch theme was endless so this was neccesary
+function loop(){ 
+ // as my alch theme was endless so this was neccesary
+ if(buffActive('moon'))
+    skyTarget =(sky_overrides[currentMapTheme]&& sky_overrides[currentMapTheme].night)||  mode_sky.night;
+
  updateSky();
  updateAudioFade();
  spawnParticle();
  spawnBuffRain();
+ spawnPhotoSparks();
  updateParticles();
  updateSpeedometer();
  applyDecay();
