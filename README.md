@@ -5,7 +5,7 @@ A PROCEDURAL APP IN WHICH YOU TYPE TO GROW YOUR GARDEN TREE
 SEE THE  VIDEO AS THEY EXPLAIN BETTER
 
 [![Game- How to play](ss.png)]
-(https://youtu.be/yFScWrc2F5A?si=3YzLyFfT6XGiaEwS)
+(https://youtu.be/Hz88llKLT6s)
 
 ## DASH
 ![dashboard](ss.png)
