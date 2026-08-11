@@ -34,7 +34,13 @@ const PALETTES= {
         leaves: PALETTE.leaves, flowers:PALETTE.flowers, flowerCenter: PALETTE.flowerCenter}, graveyard:{
             stems:['#2b2530','#332b3a','#241f2b'],leaves:['#4a3d55','#3a3140','#584a63'],
             flowers :['#6e2f5e','#8a3d74','#5a2450'], flowerCenter :['#c9a3d9','#a878c4']
-        }
+        },
+        samurai :{stems:['#3a2418' ,'#4a2e1c',
+            '#2e1c12'
+        ],leaves:['#5a3a28','#4a3020', '#6b4530' 
+        ],flowers:['#c81d1d' ,
+            '#e0342f', '#b31414','#8f1010'],
+        flowerCenter:['#ffd54f' , '#ffca28']}
     };
 const sky_overrides= {graveyard:{sunlight:{t:'#241a33',m:'#2e2040',b:'#3a2a51', g: '#180f24',ge:'#100a18'
 },rain:{t:'#1c1428',m:'#241a33',b:'#2c2140', g: '#130d1c',ge:'#0c0812'}, breeze:{t:'#281f3d',m:'#32284a',b:'#3d3159', g: '#1a1327',ge:'#120c1c'},
@@ -42,6 +48,15 @@ blossom:
 {t:'#2e1f42',m:'#382650',b:'#432e5e', g: '#1e1428',ge:'#150e1e'}, night:{t:'#0a0612 ',m:'#120a1c',b:'#1a1208', g: '#08050c',ge:'#040308'}
 
 
+},samurai :{
+sunlight :{t:'#ffe0b8',m:'#ffc98f',b:'#ff9e6e',g :'#8f4a2a',ge :'#6b3418'
+
+}, rain:{t:'#d9a878',m:'#c985fe' ,
+    b:'#a86840', g :'#6b3f24',ge :'#4a2a18'
+},breeze :{t: '#ffd9a0', m:'#ffbe80',b:'#ff9860', g:'#7a4228',ge:'#5a3018'},blossom:{t :'#ff8f70', m:'#e85d4a',
+    b:'#c73a2e',
+    g:'#4a1e14', ge:'#301006'
+},night:{t:'#241008',m:'#3a1810', b:'#4a2014', g:'#1a0a06', ge:'#100604'}
 }};
 const themeMusic ={graveyard: new
     Audio("horror.mp3")}; Object.values(themeMusic).forEach(a=>{
@@ -175,8 +190,9 @@ function spawnTombstones(){
     canvas.classList.add('shake');
     setTimeout(()=> canvas.classList.remove('shake'),420);
 }
-function applyMapTheme(id ,skipClear){mapMenu.classList.add('hidden');
-    if (id==='samurai') return; currentMapTheme=id ; localStorage.setItem('gardenMap',id );
+function applyMapTheme(id ,skipClear){
+    mapMenu.classList.add('hidden');
+ localStorage.setItem('gardenMap',id );
 const pal = PALETTES[id]|| PALETTES.classic ; PALETTE.stems= pal.stems;
 
 PALETTE.leaves=pal.leaves; 
@@ -262,6 +278,14 @@ if (currentMapTheme ==='graveyard'&& Math.random() <0.05){particles.push({
     vx:rnd(0.1,0.4),  vy:0, 
     size :rnd(40,80), alpha:0.12
 });}
+if (currentMapTheme==='samurai' && Math.random()<0.12)
+{particles.push({type:'redpetal',
+    x :rnd(0,W ),
+    y: -10,
+    vx: rnd(-0.05,0.05), size:rnd(6,11),color :pick(['#c81d1d',
+        '#e0342f','#b31414'
+    ])
+});}
 }
 
 function updateParticles(){
@@ -304,7 +328,7 @@ ctx.globalAlpha =1 ;
  ctx.restore();}}
 
 
-//todo the  same for samurai eeffect of blood rain too
+//todo is dun
 if (currentMapTheme ==='graveyard'){for (const p of particles){
     if(p.type ==='fog'){ctx.save(); 
          ctx.globalAlpha =p.alpha ;
@@ -315,7 +339,15 @@ ctx.fill();
         ctx.restore();
     }
 }}
-
+if (currentMapTheme ==='samurai'){for( const p  of particles){if(p.type==='redpetal'){ctx.save();
+    ctx.translate(p.x,p.y); ctx.rotate(p.rot); ctx.fillStyle= p.color;
+    ctx.globalAlpha =0.85;
+ctx.beginPath();
+ctx.ellipse(0,0,p.size *0.5,p.size *0.22,0,0,Math.PI*2);
+ctx.fill ();
+ctx.globalAlpha =1; ctx.restore()
+;
+}}}
 }
 /*will keep this feature rare so thers more to explore*/
 let sparkles=[];
@@ -577,7 +609,23 @@ ctx.lineTo(x+r*.5,y-r);
 ctx.moveTo(x,y-r *1.5); 
 ctx.lineTo(x,y-r* 0.5); 
 ctx.stroke(); ctx.restore ();
-} 
+}
+function dtGate(x,y){ctx.save();
+    ctx.strokeStyle='#8f1010'; ctx.lineWidth  =6;
+    ctx.lineCap ='round';
+ctx.beginPath(); ctx.moveTo(x-24,y) ;
+ctx.lineTo(x-24, y-46); ctx.stroke();
+
+ctx.lineWidth= 8; ctx.beginPath(); ctx.moveTo(x+24,y); 
+ctx.lineTo(x+24 , y-46);
+ctx.stroke();ctx.lineWidth=4;
+ctx.beginPath();
+ctx.moveTo(x-26,y-40); ctx.lineTo(x+26,y-40);
+ctx.stroke();ctx.restore();}
+
+
+// add  a samurai too
+
 function drawSpecialPlants(){
     if(unlocked.sunflower) drawSunflower(W-70,H-18);
         if(unlocked.dandelion) drawDandelion(W-30, H-18);
