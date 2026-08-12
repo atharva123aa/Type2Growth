@@ -62,6 +62,9 @@ const themeMusic ={graveyard: new
     Audio("horror.mp3")}; Object.values(themeMusic).forEach(a=>{
     a.loop= true; a.volume=0.9;
 });//jasdfasdjasdfasd
+const swordSFX =new Audio ("short.mp3"); swordSFX.volume= 0.89 ;
+const eventMusic = new Audio("mid.mp3");
+eventMusic.volume =0.75 ;
 const hSFX =[new Audio("h1.mp3"),
     new Audio("h2.mp3"), new Audio("h3.mp3"),new Audio("h4.mp3"),
     new Audio("h5.mp3"), new Audio("h6.mp3")
@@ -190,7 +193,62 @@ function spawnTombstones(){
     canvas.classList.add('shake');
     setTimeout(()=> canvas.classList.remove('shake'),420);
 }
-function applyMapTheme(id ,skipClear){
+let samuraiEventActive=false;
+let samuraiEventTimer =null; let eventHits=0;
+const EVENT_HITS_NEEDED= 18;
+let eventDTimer=null;
+function scheduleSwordEvent(){
+    const wait=rnd(45000,75000);
+    samuraiEventTimer =setTimeout(()=>{if (currentMapTheme==='samurai' &&musicStarted&&!samuraiEventActive){triggerSwordEvent();}
+scheduleSwordEvent();} ,wait);
+}
+function clearSwordEvent(){clearTimeout(samuraiEventTimer);
+    clearTimeout(eventDTimer); samuraiEventActive= false;
+
+    document.getElementById('samuraiEventOverlay')?.classList.add('hidden');
+    eventMusic.pause();
+eventMusic.currentTime = 0;
+}
+function triggerSwordEvent(){swordSFX.currentTime =0;
+    swordSFX.play().catch(()=>{}
+    ); screenShake();
+canvas.classList.add('jumpflash');
+        setTimeout(()=>canvas.classList.remove('jumpflash'),250);
+for  (const p  of plants)
+    wiltSeg(p.root, 0.55);//made the effect very less i think of improving it but not now
+startSamuraiEvent();
+}
+function startSamuraiEvent(){samuraiEventActive =true;
+    eventHits =  0;
+    themeMusic.samurai.pause();
+eventMusic.currentTime= 0 ; 
+eventMusic.play().catch(()=>{});
+document.getElementById('samuraiEventOverlay')?.classList.remove('hidden'); updateeBars();
+const startedAt= Date.now (); const DURATION =32000;
+function tick (){if (!samuraiEventActive)
+    return;
+    const remain=Math.max(0,DURATION -(Date.now()-startedAt));
+    const timerFill= document.getElementsByClassName('eventTimerFill');
+  if(timerFill) 
+    timerFill.style.width =(remain /DURATION*100) +'%';
+if(remain <=0){loseSamuraiEvent();
+    return;
+}
+eventDTimer =setTimeout(tick,100);
+
+  }
+  tick();}
+  function updateeBars(){
+    const fill =document.getElementById('eventProgressFill');
+    if (fill)
+        fill.style.width =clamp(eventHits /EVENT_HITS_NEEDED0,0,1)*100+'%';
+  }
+
+function winSamuraiEvent(){ 
+    samuraiEventActive =false;
+clearTimeout(eventDTimer);
+
+}
     mapMenu.classList.add('hidden');
  localStorage.setItem('gardenMap',id );
 const pal = PALETTES[id]|| PALETTES.classic ; PALETTE.stems= pal.stems;
@@ -282,7 +340,10 @@ if (currentMapTheme==='samurai' && Math.random()<0.12)
 {particles.push({type:'redpetal',
     x :rnd(0,W ),
     y: -10,
-    vx: rnd(-0.05,0.05), size:rnd(6,11),color :pick(['#c81d1d',
+    vx: rnd(-0.4,0.4), vy:rnd(0.8,1.6),
+rot : rnd(0, Math.PI*2),
+spin :rnd(-0.05,0.05), size : rnd(6,11),
+color :pick(['#c81d1d',
         '#e0342f','#b31414'
     ])
 });}
@@ -395,13 +456,18 @@ const BUFF_DURATION =30000;
 const buffCosts ={
     rain:{leaves:20, flowers:0}, sun:{leaves:25, flowers:5},
     sakura:{leaves:0, flowers:15}, 
-    moon :{leaves:30, flowers:10}, photosynthesis:{leaves:35, flowers:0}//1st time i used bio in smthg 
+    moon :{leaves:30, flowers:10}, photosynthesis:{leaves:35, flowers:0} ,//1st time i used bio in smthg 
+k_growth :{leaves: 99999, flowers: 99999}, k_bloom :{
+    leaves:99999,flowers :99999
+}, k_weather:{leaves:99999,flowers :99999}
+};// like yes these are sideffect when you are not good in backend it is very absurd ig
 
-};
 //one more blessing is what i guess goin to get added next update
 let  buffs={rain:{until:0},
 sun:{until:0}, sakura :{until:0},moon:{until:0}
-,photosynthesis:{until:0}};
+,photosynthesis:{until:0},k_growth:{until :0},
+k_bloom:{until:0},
+k_weather:{until:0}};
 function buffActive(id){return Date.now() < buffs[id].until;
 
 } function activateBuff(id){
@@ -630,11 +696,12 @@ function drawSpecialPlants(){
     if(unlocked.sunflower) drawSunflower(W-70,H-18);
         if(unlocked.dandelion) drawDandelion(W-30, H-18);
             if(unlocked.blossomtree) drawBlossomTree(W-130,H-18);
-            if(unlocked.rose) drawRose(W-190,H-18); if (unlocked.cherryframe) drawCherryFrame();
+            if(unlocked.rose) drawRose(W-190,H-18); 
+            if (unlocked.cherryframe) drawCherryFrame();
             if (currentMapTheme=== 'graveyard'){
             for (const t of tombstones) 
                 drawTombstone(t.x,t.y, t.r);
-            }
+            } if(currentMapTheme==='samurai'){dtGate(80, H-18)}
 }
 
 const enchantColors =['#9fd3ff', '#ffd166','#ff9fc4','#c9a0ff','#8fffc4'];
@@ -883,11 +950,13 @@ if (ch==='.'){this.dropLeaf(); return; }
 if (isSpace|| (tip.depth>2 && Math.random() <0.4)
 ) {this.branch(tip);} else if (isVowel &&  Math.random() <0.7) {
     if (!tip.flower) {
-        const sakuraBoost= buffActive('sakura') ;
+        const sakuraBoost= buffActive('sakura');
+    const kBloom=buffActive('k_bloom');
         tip.flower={
             x:tip.ex,
             y:tip.ey,
-            r: clamp((4 +freq*0.7)*(sakuraBoost?1.6:1),5,sakuraBoost?24:14),color:this.flowerColor,
+            r: clamp((4 +freq*0.7)*((sakuraBoost ||kBloom)? 1.7 :1),5,(sakuraBoost||kBloom)?26:14),
+            color:this.flowerColor,
             center:this.flowerCenter, 
             petals:5+ Math.floor(freq/ 2)+(sakuraBoost?4:0),rot:Math.random()* Math.PI}; 
                 totalFlowers++;
@@ -913,10 +982,15 @@ const leafChance =buffActive('rain') ? 0.8:0.5;
     const wbl=rnd(-0.18, 0.18);
     const NewAngle=tip.angle+ wbl;
     const rainMult =buffActive('rain') ? 1.6:1;
-    const bLen=clamp(20+ speed*0.4 +freq *1.6,14,49);
+    const bLen=clamp((20+ speed*0.4 +freq *1.6)*(
+        buffActive('k_growth') ?2.2: 1
+    ), 14,110);
     const len= rnd(bLen*0.8,bLen*1.2);
     const sunThinning=buffActive('sun') ?0.15 :0.6;
     const photoFatten= buffActive('photosynthesis')? 1.4: 0;
+    const kBoost=
+buffActive('k_growth')? 2.2 :
+1;
     const thick=Math.max(1,tip.thick- sunThinning+ photoFatten);
     const child=new Segment(tip.ex, tip.ey,NewAngle,len,thick,this.stemColor, tip.depth +1); tip.children.push(child);
     const idx= this.tips.indexOf(tip);
