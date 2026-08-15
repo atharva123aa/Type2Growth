@@ -57,7 +57,41 @@
         <div class="stat">Stem<span id="sc">0</span></div><div class="stat">Chars<span id="cc">0 </span></div><div class="stat">Leaves<span id="lc">0</span></div><div class="stat">Flowers<span id="fc">0</span></div>
         <div  class="stat"> speed<span id="wpm">0</span> wpm</div>
     
-    </div><canvas id ="canvas"></canvas><div id="fogOverlay" class="hidden"></div><div id ="inputarea">
+    </div><canvas id ="canvas"></canvas><div id="fogOverlay" class="hidden"></div>
+    
+<div id="samuraiEventoverlay" class="hidden">
+    <div class="eventbox"><h2><strong><em>Sword shhh</em></strong></h2><!--i think i will add every word style here-->
+        <p>Strike it</p>
+        <button id="sTarget">⚔️dmg.</button><div class= "eventBar">
+            <div class="eventBar-fill"id="eventProgressFill"></div>
+        </div>
+<div class="eventBar timer"><div class="eventBar-fill"id=
+    "eventTimerFill"></div>
+</div></div></div>
+
+<!--some random text feature also is todo--><div id="buffChoiceOverlay"class="hidden"><div class="eventBox"><h2>Won</h2>
+<p>choose reward (60s):</p>
+<button class="buffChoiceBtn" data-buff="k_weather">control the sky</button>
+<button class="buffChoiceBtn" data-buff="k_bloom">Radient bloom</button>
+<button class="buffChoiceBtn" data-buff="k_growth">Growth rapidly</button>
+</div>
+</div><div id="weatherMenu" class= "hidden">
+    <button class ="weatherPickBtn" 
+    data-weather="sunlight">🌞</button><!--man these win emoji are just very untuff i would buy mac soon-->
+   <button class ="weatherPickBtn" 
+    data-weather="rain">⛈️</button>
+    <button class ="weatherPickBtn" 
+    data-weather="breeze">🪟</button>
+   <button class ="weatherPickBtn" 
+    data-weather="blossom">🌸</button><button class ="weatherPickBtn" 
+    data-weather="night">🥮</button>
+</div>
+
+
+
+
+
+<div id ="inputarea">
         <textarea id="typebox" placeholder="FAST FAST ! START TYPING" autocomplete="off" spellcheck="false"></textarea>
         <div id="tip">for flower growth use vowel .for stem use space and for leave type fast. try ! ? . too for easter eggs and press enter key for new tree
             
