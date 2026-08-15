@@ -59,7 +59,7 @@ sunlight :{t:'#ffe0b8',m:'#ffc98f',b:'#ff9e6e',g :'#8f4a2a',ge :'#6b3418'
 },night:{t:'#241008',m:'#3a1810', b:'#4a2014', g:'#1a0a06', ge:'#100604'}
 }};
 const themeMusic ={graveyard: new
-    Audio("horror.mp3")}; Object.values(themeMusic).forEach(a=>{
+    Audio("horror.mp3"), samurai:new Audio("long.mp3")}; Object.values(themeMusic).forEach(a=>{
     a.loop= true; a.volume=0.9;
 });//jasdfasdjasdfasd
 const swordSFX =new Audio ("short.mp3"); swordSFX.volume= 0.89 ;
@@ -228,7 +228,7 @@ const startedAt= Date.now (); const DURATION =32000;
 function tick (){if (!samuraiEventActive)
     return;
     const remain=Math.max(0,DURATION -(Date.now()-startedAt));
-    const timerFill= document.getElementsByClassName('eventTimerFill');
+    const timerFill= document.getElementById('eventTimerFill');
   if(timerFill) 
     timerFill.style.width =(remain /DURATION*100) +'%';
 if(remain <=0){loseSamuraiEvent();
@@ -241,15 +241,23 @@ eventDTimer =setTimeout(tick,100);
   function updateeBars(){
     const fill =document.getElementById('eventProgressFill');
     if (fill)
-        fill.style.width =clamp(eventHits /EVENT_HITS_NEEDED0,0,1)*100+'%';
+        fill.style.width =clamp(eventHits /EVENT_HITS_NEEDED,0,1)*100+'%';
   }
+function strikeSword(){
 
-function winSamuraiEvent(){ 
+    if (!samuraiEventActive) return;
+    eventHits++;
+    screenShake();
+    updateeBars();
+    if (eventHits>=EVENT_HITS_NEEDED)
+        winSamuraiEvent();}
+    function winSamuraiEvent(){
     samuraiEventActive =false;
 clearTimeout(eventDTimer); 
-document.getElementById('samuraiEventOverlay')?.classList.add('hidden') ; eventMusic.pause;
+document.getElementById('samuraiEventOverlay')?.classList.add('hidden') ; eventMusic.pause();
 if(musicStarted)
-    themeMusic.samurai.play().catch(()=> {}); document.getElementById('buffChoiceOverlay') ?.classList.remove('hidden');
+    themeMusic.samurai.play().catch(()=> {}); document.getElementById('buffChoiceOverlay') 
+?.classList.remove('hidden');
 
 
 }
@@ -261,14 +269,14 @@ function csb(id){
     spawnBuffBurst('sun');
     if (id==='k_weather'){
 document.getElementById('weatherMenu')?.classList.remove('hidden');}}
-function lse(){samuraiEventActive =False;
+function lse(){samuraiEventActive =false;
 document.getElementById('samuraiEventOverlay')?.classList.add('hidden');
 eventMusic.pause();
 if(musicStarted) 
     themeMusic.samurai.play().catch(()=>{}); resetGardenData();//loss or samurai event 'samurai event ,loss follows brother loss folows
 }
 function resetGardenData(){ wallet ={leaves: 0, flowers :0};
-unlock ={sunflower:false, dandelion:false, blossomtree:false,rose:false};
+unlocked ={sunflower:false, dandelion:false, blossomtree:false,rose:false};
 buffs={rain:{until:0}
 , sun:{until:0}
 ,sakura :{until:0}
@@ -282,6 +290,7 @@ typebox.value=''; pLen=0;
 localStorage.setItem("gardenText", ""); saveWallet(); 
 ctx.clearRect(0,0,W,H);
 screenShake();}
+function applyMapTheme(id,skipClear){//i just forgot i had to readd it
     mapMenu.classList.add('hidden');
  localStorage.setItem('gardenMap',id );
 const pal = PALETTES[id]|| PALETTES.classic ; PALETTE.stems= pal.stems;
@@ -1439,6 +1448,15 @@ if (saved)
 }
 typebox.focus();
 applyMapTheme(currentMapTheme,true)// forgot this like things were bugging a lot not even kidding i got fog instead of flower
+document.getElementById('sTarget')?.addEventListener('click',strikeSword);
+document.querySelectorAll('.buffChoiceBtn').forEach(btn=>{
+    btn.addEventListener('click',()=>csb(btn.dataset.buff)); 
+});
+        document.querySelectorAll('.weatherPickBtn').forEach(btn=>{
+            btn.addEventListener('click',()=>{if (!buffActive('k_weather')) return;
+        applyMode(btn.dataset.weather);});
+        });
+    
 
 canvas.addEventListener('click',(e)=>{
 if(currentMapTheme!=='graveyard' || !plants.length) return; 
