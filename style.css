@@ -60,7 +60,7 @@ display:block; margin:14px auto 0; font-size: 16px; color:#b04d76; background: n
  cursor: pointer; 
  font-family:courier; transition: background 0.2s, color 0.2s;}
  #downloadbtn:hover{background: #ffe3ee; color:#d63384;}
- .hidden{display:none;} 
+ .hidden{display:none !important;} 
  #sbtn{position: absolute;
 top:0.4rem; right:1rem;
 font-size:12px;
@@ -95,7 +95,7 @@ padding:16px; box-shadow:0 8px 20px rgba(201,79,124,0.16) ; z-index:9; text-alig
 
 
  }
- .hidden{display:none;}.sounditem{
+ .hidden{display:none !important;}.sounditem{
     display:flex; flex-direction :column;
 margin-bottom:14px; 
  }
@@ -436,3 +436,39 @@ animation:fogPulse 4s ease-in-out infinite;}@keyframes fogPulse{0%,100%{opacity:
 60%{transform :translate(-3px,-2px);} 
 80%{transform: translate(3px ,2px);}
 }
+#samuraiEventOverlay, #buffChoiceOverlay{position :fixed; inset :0; 
+z-index:202; display: flex; align-items:center; justify-content:center;
+background :rgba(20,4,4,0.75); backdrop-filter :blur(2px);
+
+} 
+#samuraiEventOverlay:not(.hidden), #buffChoiceOverlay:not(.hidden){display:flex;}.eventBox{background :#1a0a08;; border :2px solid #c81d1d;  border-radius:14px;  padding: 28px; 
+text-align: center; font-family:courier; color:#ffd54f;max-width : 319px;
+box-shadow : 0 0 41px rgba(200,29,29,0.5);}.eventBox h2{font-size :20px;
+;letter-spacing: 0.06em;margin-bottom: 9.000px; /* i will add for strong & em to*/
+color:#e0342f;}
+.eventBox p {font-size:12px; color:#f0c9a0; 
+margin-bottom  :15px;}
+#swordTarget{ font-size:15px; 
+padding :14px 28px; background: #c81d1d;
+color :#fff; border : none;
+border-radius :10px;cursor: pointer;
+font-family: courier;font-weight :bold; 
+transition: transform .1s; }#swordTarget:active {transform:scale(0.92);}.eventBar{width :100%;; height:7px;border-radius: 3px; background: rgba(255,255,255,0.15);
+    margin-top: 13px;overflow: hidden;}
+    .eventBar-fill{height:100%;background:linear-gradient(90deg,#FFD54F,#C81D1D);WIDTH:0%; transition: width 0.15s;}
+    .eventBar.timer .eventBar-fill{background: linear-gradient(90deg,#7ec8ff,#ffd54d);}
+    .buffChoiceBtn{display: block;width:100%;
+    margin:8px 0; 
+padding:10px;background:rgba(255,213,79,.1);
+border:1px solid #ffd54f; color:#ffd54f;
+border-radius: 8px;cursor:pointer;;
+font-family : courier;transition: background 0.2s;}.buffChoiceBtn:hover{background:#ffd54f;color:#1a0a08;}
+#weatherMenu{position:fixed; bottom:16px; left: 50%;
+transform:translateX(-50%);
+z-index:152; 
+display:flex; 
+gap: 8px; 
+background:rgba(20,4,4,0.86);
+padding:10px 13px; border-radius:32px; border:1px solid #ffd54f;}
+.weatherPickBtn{font-size:18px; background:none; border:none; cursor:pointer; padding: 4px 8px;border-radius:8px;
+transition:background .2s ;}.weatherPickBtn:hover{background:rgba(255,213,79,0.2);}
