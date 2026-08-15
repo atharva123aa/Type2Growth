@@ -246,9 +246,42 @@ eventDTimer =setTimeout(tick,100);
 
 function winSamuraiEvent(){ 
     samuraiEventActive =false;
-clearTimeout(eventDTimer);
+clearTimeout(eventDTimer); 
+document.getElementById('samuraiEventOverlay')?.classList.add('hidden') ; eventMusic.pause;
+if(musicStarted)
+    themeMusic.samurai.play().catch(()=> {}); document.getElementById('buffChoiceOverlay') ?.classList.remove('hidden');
+
 
 }
+function csb(id){
+    document.getElementById('buffChoiceOverlay')?.classList
+    .add('hidden') ;//will add some jumpscare but leaving for now
+    buffs[id].until =Date.now() +60000;
+    //reward should be of a min
+    spawnBuffBurst('sun');
+    if (id==='k_weather'){
+document.getElementById('weatherMenu')?.classList.remove('hidden');}}
+function lse(){samuraiEventActive =False;
+document.getElementById('samuraiEventOverlay')?.classList.add('hidden');
+eventMusic.pause();
+if(musicStarted) 
+    themeMusic.samurai.play().catch(()=>{}); resetGardenData();//loss or samurai event 'samurai event ,loss follows brother loss folows
+}
+function resetGardenData(){ wallet ={leaves: 0, flowers :0};
+unlock ={sunflower:false, dandelion:false, blossomtree:false,rose:false};
+buffs={rain:{until:0}
+, sun:{until:0}
+,sakura :{until:0}
+,moon :{until:0}, photosynthesis :{until:0}, k_bloom :{until:0}
+,k_weather :{until:0}
+
+};
+plants=[]; totalStems=0; totalFlowers =0;
+totalLeaves= 0; totalFlowers =0 //some could ebe missing as i dont remember every
+typebox.value=''; pLen=0; 
+localStorage.setItem("gardenText", ""); saveWallet(); 
+ctx.clearRect(0,0,W,H);
+screenShake();}
     mapMenu.classList.add('hidden');
  localStorage.setItem('gardenMap',id );
 const pal = PALETTES[id]|| PALETTES.classic ; PALETTE.stems= pal.stems;
@@ -277,7 +310,11 @@ Object.assign(mode_sky,sky_overrides[id] ||mode_sky_d);
     } else{tombstones=[];
 document.getElementById('fogOverlay')?.classList.add('hidden');
     }
- 
+ if(id==='samurai'){scheduleSwordEvent
+();} else{clearSwordEvent() ;
+    clearTimeout(samuraiEventTimer);document.getElementById('weatherMenu')?.classList.add('hidden');
+
+ }
 }
 const mapBtn= document.getElementById('mapBtn'); 
 const mapMenu = document.getElementById('mapMenu'); mapBtn.addEventListener('click', (e)=>{
